@@ -3,795 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SJ Dev Inc | Innovative Tech Solutions</title>
+    <title>For My Dearest Pfano</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        :root {
-            --primary: #00f3ff;
-            --secondary: #8a2be2;
-            --accent: #ff00c8;
-            --dark: #0a0a1a;
-            --darker: #050510;
-            --light: #f0f8ff;
-        }
-
+        
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--darker);
-            color: var(--light);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Loader Styling */
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--darker);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loader-robot {
-            width: 80px;
-            height: 100px;
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .robot-head {
-            width: 50px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: 10px 10px 0 0;
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .robot-eye {
-            width: 8px;
-            height: 8px;
-            background: var(--dark);
-            border-radius: 50%;
-            position: absolute;
-            top: 15px;
-            animation: blink 2s infinite;
-        }
-
-        .robot-eye.left { left: 15px; }
-        .robot-eye.right { right: 15px; }
-
-        .robot-body {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(145deg, #00c2ff, #00a2e4);
-            border-radius: 5px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .screen {
-            width: 40px;
-            height: 20px;
-            background: var(--dark);
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .screen::before {
-            content: "LOADING...";
-            position: absolute;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 6px;
-            color: var(--primary);
-            top: 5px;
-            left: 5px;
-            animation: typing 3s infinite;
-        }
-
-        .progress-bar {
-            width: 150px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .progress {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            animation: loading 3s ease-in-out forwards;
-        }
-
-        /* Background Animation Elements */
-        .background-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .robot {
-            position: absolute;
-            font-size: 24px;
-            color: var(--primary);
-            opacity: 0.7;
-            animation: moveAcross 20s linear infinite;
-        }
-
-        .ufo {
-            position: absolute;
-            font-size: 28px;
-            color: var(--accent);
-            opacity: 0.7;
-            animation: moveAcross 25s linear infinite;
-        }
-
-        /* Header Styling */
-        header {
-            padding: 20px;
-            text-align: center;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
-            position: relative;
-        }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 5px;
-        }
-
-        .tagline {
-            font-family: 'Exo 2', sans-serif;
-            font-size: 14px;
-            color: var(--primary);
-            letter-spacing: 2px;
-        }
-
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 15px;
-            background: rgba(5, 5, 16, 0.8);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
-        }
-
-        .nav-btn {
-            padding: 10px 15px;
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--light);
-            border-radius: 30px;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn:hover {
-            background: rgba(0, 243, 255, 0.3);
-            transform: translateY(-3px);
-            box-shadow: 0 0 15px var(--primary);
-        }
-
-        /* Sections */
-        section {
-            padding: 30px 20px;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab, #ffb3c6);
+            color: #5a0035;
             min-height: 100vh;
-            display: none;
-        }
-
-        section.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--primary);
-            text-align: center;
-        }
-
-        h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            margin: 15px 0;
-            color: var(--secondary);
-        }
-
-        p {
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        /* Home Section */
-        #home {
-            text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
         }
-
-        .profile {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 3px solid var(--primary);
-            padding: 5px;
-            margin-bottom: 20px;
-            background: var(--dark);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, var(--primary), transparent);
-            animation: rotate 3s linear infinite;
-            z-index: -1;
-        }
-
-        .profile img {
+        
+        .container {
+            max-width: 800px;
             width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: var(--darker);
-        }
-
-        .intro-text {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .highlight {
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        /* Services Section */
-        .service-cards {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .service-card {
-            background: rgba(10, 10, 26, 0.6);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 10px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.2);
-            border-color: var(--primary);
-        }
-
-        .service-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-
-        .price {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--accent);
-            font-size: 18px;
-            margin: 10px 0;
-        }
-
-        /* Service Detail Pages */
-        .service-detail {
-            background: rgba(10, 10, 26, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(138, 43, 226, 0.3);
-        }
-
-        .whatsapp-btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: linear-gradient(45deg, #25D366, #128C7E);
-            color: white;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .whatsapp-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px #25D366;
-        }
-
-        /* Contact Section */
-        .contact-info {
-            margin-top: 20px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .contact-icon {
-            font-size: 24px;
-            color: var(--primary);
-            margin-right: 15px;
-            width: 30px;
-        }
-
-        /* Footer */
-        footer {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(165, 0, 80, 0.3);
+            padding: 40px;
             text-align: center;
-            padding: 20px;
-            background: rgba(5, 5, 16, 0.9);
-            border-top: 1px solid rgba(255, 0, 200, 0.3);
-            margin-top: 30px;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .social-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            color: var(--light);
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--primary);
-            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            animation: fadeIn 1.5s ease-out;
         }
-
-        .social-btn:hover {
-            transform: translateY(-5px) rotate(10deg);
-            box-shadow: 0 5px 15px var(--primary);
-            background: rgba(0, 243, 255, 0.3);
-        }
-
-        .social-btn::before {
-            content: "";
+        
+        .heart-bg {
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: all 0.5s ease;
-        }
-
-        .social-btn:hover::before {
-            left: 100%;
-        }
-
-        .copyright {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 14px;
-            color: var(--primary);
-            margin-top: 10px;
-        }
-
-        /* Music Player */
-        .music-player {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-        }
-
-        .music-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(138, 43, 226, 0.2);
-            border: 1px solid var(--secondary);
-            color: var(--light);
             font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
+            color: rgba(255, 107, 157, 0.2);
+            z-index: 0;
+            animation: float 5s infinite ease-in-out;
         }
-
-        .music-btn:hover {
-            background: rgba(138, 43, 226, 0.4);
-            transform: scale(1.1);
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-20px) rotate(10deg); }
         }
-
-        /* Animations */
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @keyframes typing {
-            0% { content: "L"; }
-            10% { content: "LO"; }
-            20% { content: "LOA"; }
-            30% { content: "LOAD"; }
-            40% { content: "LOADI"; }
-            50% { content: "LOADIN"; }
-            60% { content: "LOADING"; }
-            70% { content: "LOADING."; }
-            80% { content: "LOADING.."; }
-            90%, 100% { content: "LOADING..."; }
-        }
-
-        @keyframes loading {
-            0% { width: 0%; }
-            20% { width: 20%; }
-            40% { width: 40%; }
-            60% { width: 60%; }
-            80% { width: 80%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes moveAcross {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(calc(100vw + 100px)); }
-        }
-
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #9d174d;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
-
-        /* Media Queries for Mobile Optimization */
+        
+        .name {
+            color: #ff0055;
+            font-weight: 800;
+            text-decoration: underline;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            color: #7c2d5c;
+            font-style: italic;
+        }
+        
+        .poem-container {
+            background: linear-gradient(to right, #ffe4ec, #ffcfe1);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            border-left: 5px solid #ff0055;
+            position: relative;
+            z-index: 1;
+            transform: perspective(500px) rotateX(0deg);
+            transition: transform 0.5s;
+        }
+        
+        .poem-container:hover {
+            transform: perspective(500px) rotateX(5deg);
+        }
+        
+        .poem-title {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #9d174d;
+            font-weight: 600;
+        }
+        
+        .poem {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #5a0035;
+            font-style: italic;
+        }
+        
+        .poem-author {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #9d174d;
+        }
+        
+        .bible-verse {
+            background-color: #fef2f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-size: 1.3rem;
+            color: #7c2d5c;
+            border: 2px dashed #ff8fab;
+        }
+        
+        .verse {
+            font-weight: 600;
+            color: #9d174d;
+        }
+        
+        .question {
+            font-size: 1.8rem;
+            margin: 30px 0;
+            color: #5a0035;
+            font-weight: 600;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 18px 45px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+        }
+        
+        .btn-yes {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+            transform: scale(1);
+        }
+        
+        .btn-no {
+            background: linear-gradient(to right, #f44336, #c62828);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-yes:hover {
+            background: linear-gradient(to right, #2E7D32, #1B5E20);
+        }
+        
+        .btn-no:hover {
+            background: linear-gradient(to right, #c62828, #b71c1c);
+        }
+        
+        .heart-icon {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .message {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8bbd9;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            color: #5a0035;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #5a0035;
+            font-size: 1rem;
+            text-align: center;
+            opacity: 0.8;
+        }
+        
+        .hearts-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .heart {
+            font-size: 2rem;
+            color: #ff0055;
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* Responsive design */
         @media (max-width: 768px) {
-            .logo {
-                font-size: 24px;
+            .container {
+                padding: 25px;
             }
             
-            .tagline {
-                font-size: 12px;
+            h1 {
+                font-size: 2.2rem;
             }
             
-            .nav-btn {
-                padding: 8px 12px;
-                font-size: 12px;
+            .subtitle {
+                font-size: 1.2rem;
             }
             
-            h2 {
-                font-size: 22px;
+            .poem {
+                font-size: 1.1rem;
             }
             
-            .profile {
-                width: 120px;
-                height: 120px;
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
             }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
+        /* Animation for growing button */
+        @keyframes grow {
+            0% { transform: scale(1); }
+            100% { transform: scale(var(--scale-factor)); }
         }
     </style>
 </head>
 <body>
-    <!-- Loader -->
-    <div id="loader">
-        <div class="loader-robot">
-            <div class="robot-head">
-                <div class="robot-eye left"></div>
-                <div class="robot-eye right"></div>
-            </div>
-            <div class="robot-body">
-                <div class="screen"></div>
-            </div>
-        </div>
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
-    </div>
-
-    <!-- Background Animation Elements -->
-    <div class="background-elements" id="background-elements"></div>
-
-    <!-- Header -->
-    <header>
-        <div class="logo">SJ DEV INC</div>
-        <div class="tagline">CODING THE FUTURE, ONE PROJECT AT A TIME</div>
-    </header>
-
-    <!-- Navigation -->
-    <nav>
-        <button class="nav-btn" data-target="home">Home</button>
-        <button class="nav-btn" data-target="services">Services</button>
-        <button class="nav-btn" data-target="portfolio">Portfolio</button>
-        <button class="nav-btn" data-target="contact">Contact</button>
-    </nav>
-
-    <!-- Home Section -->
-    <section id="home" class="active">
-        <div class="profile">
-            <!-- Placeholder for profile image -->
-            <div style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:#0a0a1a;color:#00f3ff;font-size:40px;"><i class="fas fa-user-astronaut"></i></div>
-        </div>
-        <div class="intro-text">
-            <h2>Hello, I'm Vhuthu Ndou</h2>
-            <p>I'm a passionate <span class="highlight">web developer</span> and <span class="highlight">designer</span> with expertise in creating innovative digital solutions. I specialize in building responsive websites, web applications, and custom software tailored to your business needs.</p>
-            <p>My services range from <span class="highlight">R1800 to R3800</span>, offering premium quality at affordable prices.</p>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services">
-        <h2>My Services</h2>
-        <p>I offer a wide range of web development and design services to help bring your digital ideas to life.</p>
+    <!-- Background hearts -->
+    <div id="hearts-bg"></div>
+    
+    <div class="container">
+        <h1>For My Dearest <span class="name">Pfano</span></h1>
+        <p class="subtitle">A special question just for you...</p>
         
-        <div class="service-cards">
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-code"></i></div>
-                <h3>Website Development</h3>
-                <p>Custom websites built with the latest technologies, optimized for performance and SEO.</p>
-                <div class="price">From R1800</div>
-                <button class="nav-btn" data-target="website-service">View Details</button>
+        <div class="poem-container">
+            <div class="poem-title">How Do I Love Thee? (Sonnet 43)</div>
+            <div class="poem">
+                How do I love thee? Let me count the ways.<br>
+                I love thee to the depth and breadth and height<br>
+                My soul can reach, when feeling out of sight<br>
+                For the ends of being and ideal grace.<br>
+                I love thee to the level of every day's<br>
+                Most quiet need, by sun and candle-light.<br>
+                I love thee freely, as men strive for right;<br>
+                I love thee purely, as they turn from praise.
             </div>
-            
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
-                <h3>App Development</h3>
-                <p>Cross-platform mobile applications that work seamlessly on iOS and Android.</p>
-                <div class="price">From R2500</div>
-                <button class="nav-btn" data-target="app-service">View Details</button>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
-                <h3>UI/UX Design</h3>
-                <p>User-centered designs that enhance user experience and drive engagement.</p>
-                <div class="price">From R2000</div>
-                <button class="nav-btn" data-target="design-service">View Details</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Website Service Detail -->
-    <section id="website-service">
-        <h2>Website Development</h2>
-        
-        <div class="service-detail">
-            <p>I create stunning, responsive websites that are tailored to your specific needs. Whether you need a simple portfolio site or a complex e-commerce platform, I've got you covered.</p>
-            
-            <h3>What's Included:</h3>
-            <ul>
-                <li>Fully responsive design (mobile, tablet, desktop)</li>
-                <li>SEO optimization</li>
-                <li>Fast loading times</li>
-                <li>Custom functionality</li>
-                <li>Content management system (optional)</li>
-                <li>Basic SEO setup</li>
-                <li>Social media integration</li>
-            </ul>
-            
-            <h3>Pricing:</h3>
-            <ul>
-                <li>Basic Website: R1800 - R2200</li>
-                <li>Business Website: R2200 - R2800</li>
-                <li>E-commerce Website: R2800 - R3800</li>
-            </ul>
-            
-            <a href="https://wa.me/27834878488?text=Hi%20Vhuthu,%20I'm%20interested%20in%20your%20Website%20Development%20service" class="whatsapp-btn">
-                <i class="fab fa-whatsapp"></i> Contact via WhatsApp
-            </a>
-        </div>
-    </section>
-
-    <!-- Portfolio Section -->
-    <section id="portfolio">
-        <h2>My Portfolio</h2>
-        <p>Here are some of the projects I've worked on. Each project was custom-built to meet the client's specific requirements.</p>
-        
-        <div class="service-cards">
-            <div class="service-card">
-                <h3>Hair Booking System</h3>
-                <p>An online booking system for hair salons, allowing customers to book appointments online.</p>
-                <button class="nav-btn" data-target="hair-service">View Details</button>
-            </div>
-            
-            <div class="service-card">
-                <h3>Car Selling & Renting Platform</h3>
-                <p>A comprehensive platform for selling and renting cars with admin dashboard.</p>
-                <button class="nav-btn" data-target="car-service">View Details</button>
-            </div>
-            
-            <div class="service-card">
-                <h3>Loaning Business Website</h3>
-                <p>A website for a loaning business with loan calculator and application form.</p>
-                <button class="nav-btn" data-target="loan-service">View Details</button>
-            </div>
-            
-            <div class="service-card">
-                <h3>Balloons Booking Website</h3>
-                <p>An e-commerce site for booking party balloons with custom design options.</p>
-                <button class="nav-btn" data-target="balloons-service">View Details</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <h2>Get In Touch</h2>
-        <p>Have a project in mind? Let's discuss how I can help bring your ideas to life.</p>
-        
-        <div class="contact-info">
-            <div class="contact-item">
-                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                <div>Vhuthundou562@gmail.com</div>
-            </div>
-            
-            <div class="contact-item">
-                <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                <div>083 487 8488</div>
-            </div>
-            
-            <div class="contact-item">
-                <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
-                <div><a href="https://wa.me/27834878488" style="color: var(--light);">Message me on WhatsApp</a></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="social-links">
-            <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+            <div class="poem-author">- Elizabeth Barrett Browning</div>
         </div>
         
-        <div class="copyright">Powered by Vhuthu Ndou © 2023</div>
-    </footer>
-
-    <!-- Music Player -->
-    <div class="music-player">
-        <button class="music-btn" id="music-toggle">
-            <i class="fas fa-volume-up"></i>
-        </button>
-        <audio id="background-music" loop>
-            <!-- Add your music file here -->
-            <source src="Future_-_WAIT_FOR_U__Official_Audio__ft._Drake,_Tems(256k).mp3" type="audio/mpeg">
-        </audio>
+        <div class="bible-verse">
+            <span class="verse">Song of Solomon 4:7</span> - "You are altogether beautiful, my love; there is no flaw in you."
+        </div>
+        
+        <div class="question">Pfano, will you be my Valentine this year?</div>
+        
+        <div class="buttons">
+            <button class="btn btn-yes" id="yesBtn">
+                <i class="fas fa-heart heart-icon"></i> Yes, Absolutely!
+            </button>
+            <button class="btn btn-no" id="noBtn">
+                <i class="fas fa-times heart-icon"></i> No
+            </button>
+        </div>
+        
+        <div class="message" id="message">
+            <i class="fas fa-check-circle"></i> Wonderful! I've sent you a WhatsApp message. Please check your phone!
+        </div>
+        
+        <div class="hearts-container" id="hearts">
+            <!-- Hearts will be added here by JavaScript -->
+        </div>
+        
+        <footer>
+            Made with <i class="fas fa-heart" style="color:#ff0055;"></i> for Pfano
+        </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const loader = document.getElementById('loader');
-            const backgroundElements = document.getElementById('background-elements');
-            const sections = document.querySelectorAll('section');
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const musicToggle = document.getElementById('music-toggle');
-            const backgroundMusic = document.getElementById('background-music');
-            
-            // Hide loader after 3 seconds
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
-            }, 3000);
-            
-            // Create background animation elements
-            function createBackgroundElements() {
-                const elements = ['🤖', '👾', '🛸', '🚀', '💻', '🔌', '🖥️', '📱'];
-                
-                for (let i = 0; i < 15; i++) {
-                    const element = document.createElement('div');
-                    element.className = Math.random() > 0.5 ? 'robot' : 'ufo';
-                    element.innerHTML = elements[Math.floor(Math.random() * elements.length)];
-                    element.style.top = `${Math.random() * 100}%`;
-                    element.style.left = `${-100 - Math.random() * 50}px`;
-                    element.style.animationDuration = `${20 + Math.random() * 30}s`;
-                    element.style.animationDelay = `${Math.random() * 5}s`;
-                    backgroundElements.appendChild(element);
-                }
+            // Create background hearts
+            const heartsBg = document.getElementById('hearts-bg');
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heartsBg.appendChild(heart);
             }
             
-            // Navigation
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const target = button.getAttribute('data-target');
+            // Create floating hearts in the container
+            const heartsContainer = document.getElementById('hearts');
+            for (let i = 0; i < 8; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                heart.style.animationDelay = (i * 0.3) + 's';
+                heartsContainer.appendChild(heart);
+            }
+            
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const message = document.getElementById('message');
+            let noCount = 0;
+            let scaleFactor = 1;
+            
+            // No button functionality
+            noBtn.addEventListener('click', function() {
+                noCount++;
+                
+                // Make the Yes button bigger with each click
+                scaleFactor += 0.3;
+                yesBtn.style.setProperty('--scale-factor', scaleFactor);
+                yesBtn.style.animation = 'grow 0.5s forwards';
+                
+                // Change the No button text randomly
+                const noTexts = [
+                    "Are you sure?",
+                    "Really sure?",
+                    "Think again!",
+                    "Last chance!",
+                    "Surely not?",
+                    "You might regret this!",
+                    "Give it another thought!",
+                    "This could be a mistake!",
+                    "Have a heart!",
+                    "Don't be so cold!",
+                    "Change of heart?",
+                    "Wouldn't you reconsider?",
+                    "Is that your final answer?",
+                    "You're breaking my heart!",
+                    "Please? 🥺"
+                ];
+                
+                const randomIndex = Math.min(noCount - 1, noTexts.length - 1);
+                noBtn.innerHTML = `<i class="fas fa-times heart-icon"></i> ${noTexts[randomIndex]}`;
+                
+                // Reset animation after it completes
+                setTimeout(() => {
+                    yesBtn.style.animation = '';
+                }, 500);
+                
+                // Move the No button to a random position after 3 clicks
+                if (noCount >= 3) {
+                    const container = document.querySelector('.container');
+                    const containerRect = container.getBoundingClientRect();
+                    const maxX = containerRect.width - noBtn.offsetWidth - 20;
+                    const maxY = containerRect.height - noBtn.offsetHeight - 20;
                     
-                    // Hide all sections
-                    sections.forEach(section => {
-                        section.classList.remove('active');
-                    });
+                    const randomX = Math.random() * maxX;
+                    const randomY = Math.random() * maxY;
                     
-                    // Show target section
-                    document.getElementById(target).classList.add('active');
-                });
+                    noBtn.style.position = 'absolute';
+                    noBtn.style.left = randomX + 'px';
+                    noBtn.style.top = randomY + 'px';
+                    
+                    // Reset position after a short time (for mobile)
+                    setTimeout(() => {
+                        noBtn.style.position = '';
+                        noBtn.style.left = '';
+                        noBtn.style.top = '';
+                    }, 800);
+                }
             });
             
-            // Music toggle
-            let musicPlaying = false;
-            
-            musicToggle.addEventListener('click', () => {
-                if (musicPlaying) {
-                    backgroundMusic.pause();
-                    musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                } else {
-                    backgroundMusic.play();
-                    musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+            // Yes button functionality
+            yesBtn.addEventListener('click', function() {
+                // Show success message
+                message.style.display = 'block';
+                
+                // Create celebration hearts
+                for (let i = 0; i < 20; i++) {
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '❤';
+                    heart.style.position = 'fixed';
+                    heart.style.color = '#ff0055';
+                    heart.style.fontSize = (Math.random() * 25 + 20) + 'px';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.top = '100vh';
+                    heart.style.zIndex = '9999';
+                    heart.style.pointerEvents = 'none';
+                    document.body.appendChild(heart);
+                    
+                    // Animate the heart
+                    const animation = heart.animate([
+                        { top: '100vh', opacity: 1 },
+                        { top: Math.random() * 80 + 'vh', opacity: 0.7 },
+                        { top: '-10vh', opacity: 0 }
+                    ], {
+                        duration: Math.random() * 2000 + 2000,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                    });
+                    
+                    // Remove heart after animation
+                    animation.onfinish = () => heart.remove();
                 }
-                musicPlaying = !musicPlaying;
+                
+                // Send WhatsApp message
+                const phoneNumber = "0834878488";
+                const messageText = "Pfano said YES to being my Valentine! 💖";
+                const encodedMessage = encodeURIComponent(messageText);
+                const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                
+                // Open WhatsApp in a new tab
+                setTimeout(() => {
+                    window.open(whatsappURL, '_blank');
+                }, 1500);
+                
+                // Change button text
+                yesBtn.innerHTML = '<i class="fas fa-heart heart-icon"></i> She Said YES!';
+                yesBtn.style.background = 'linear-gradient(to right, #FF9800, #FF5722)';
+                
+                // Hide the No button
+                noBtn.style.display = 'none';
             });
             
-            // Auto-play music after load (with user gesture requirement)
-            document.body.addEventListener('click', function() {
-                if (!musicPlaying) {
-                    backgroundMusic.play().then(() => {
-                        musicPlaying = true;
-                        musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
-                    }).catch(err => {
-                        console.log('Auto-play prevented:', err);
-                    });
-                }
-            }, { once: true });
-            
-            // Initialize
-            createBackgroundElements();
+            // Reset animation on Yes button after it completes
+            yesBtn.addEventListener('animationend', function() {
+                yesBtn.style.animation = '';
+            });
         });
     </script>
 </body>
