@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Retema Student Accommodation | UNIVEN Living</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <title>Retema | Premier Student Living • UNIVEN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Lightbox CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
   <style>
     * {
@@ -18,9 +17,79 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #121212;
+      background: #0a0a0a;
       color: #ffffff;
       overflow-x: hidden;
+    }
+
+    /* Elegant Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-logo {
+      font-size: 4rem;
+      font-weight: 800;
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, #e63946 0%, #ff8c42 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 30px;
+      animation: fadeInUp 0.8s ease;
+    }
+    .loading-bar-container {
+      width: 280px;
+      height: 3px;
+      background: rgba(230, 57, 70, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .loading-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #e63946, #ff8c42);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      animation: loadingProgress 1.8s ease forwards;
+    }
+    @keyframes loadingProgress {
+      0% { width: 0%; }
+      40% { width: 45%; }
+      70% { width: 80%; }
+      100% { width: 100%; }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .loading-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      margin-top: 20px;
     }
 
     .container {
@@ -29,16 +98,17 @@
       padding: 0 40px;
     }
 
-    /* Header */
+    /* Premium Header */
     header {
-      background: #0f0f0f;
-      padding: 25px 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 20px 0;
       position: fixed;
       top: 0;
       width: 100%;
       z-index: 1000;
-      border-bottom: 2px solid #e63946;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      border-bottom: 1px solid rgba(230, 57, 70, 0.3);
+      transition: all 0.3s ease;
     }
     .nav-flex {
       display: flex;
@@ -50,201 +120,240 @@
       display: flex;
       align-items: baseline;
       gap: 8px;
-      flex-wrap: wrap;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     .logo:hover {
       transform: scale(1.02);
+      letter-spacing: 0.5px;
     }
     .logo-main {
-      font-size: 3.2rem;
+      font-size: 2.8rem;
       font-weight: 800;
+      font-family: 'Cormorant Garamond', serif;
       letter-spacing: -1px;
-      color: #e63946;
-      line-height: 1;
+      background: linear-gradient(135deg, #e63946, #ff8c42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
     .logo-sub {
-      font-size: 1.1rem;
+      font-size: 0.85rem;
       font-weight: 400;
-      color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 0.5px;
-      line-height: 1.4;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 1px;
     }
     
-    /* Menu Button */
     .menu-btn {
-      background: #e63946;
+      background: linear-gradient(135deg, #e63946, #ff6b4a);
       color: white;
       border: none;
-      padding: 14px 32px;
+      padding: 12px 32px;
       border-radius: 50px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       display: flex;
       align-items: center;
-      gap: 12px;
-      transition: all 0.3s;
+      gap: 10px;
+      transition: all 0.4s;
+      box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
     }
     .menu-btn:hover {
-      background: #c92a3a;
-      transform: scale(1.05);
-      box-shadow: 0 5px 20px rgba(230, 57, 70, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(230, 57, 70, 0.5);
+      letter-spacing: 0.3px;
     }
     
-    /* Overlay Menu */
+    /* Premium Overlay Menu */
     .menu-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.96);
+      background: rgba(0, 0, 0, 0.98);
+      backdrop-filter: blur(20px);
       z-index: 2000;
       display: none;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(15px);
+      animation: fadeIn 0.4s ease;
     }
     .menu-overlay.active {
       display: flex;
-      animation: fadeIn 0.3s ease;
     }
     .menu-container {
-      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      background: linear-gradient(145deg, #141414, #0a0a0a);
       border-radius: 48px;
-      padding: 50px;
-      max-width: 550px;
+      padding: 55px 60px;
+      max-width: 600px;
       width: 90%;
       text-align: center;
-      border: 2px solid #e63946;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid rgba(230, 57, 70, 0.4);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(230,57,70,0.1);
+      animation: scaleIn 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
     .menu-container h2 {
-      color: #e63946;
+      background: linear-gradient(135deg, #e63946, #ff8c42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       margin-bottom: 35px;
-      font-size: 2.2rem;
+      font-size: 2rem;
+      font-weight: 600;
     }
     .menu-options {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
     .menu-option {
-      background: #2a2a2a;
-      padding: 18px 28px;
+      background: rgba(30,30,30,0.8);
+      padding: 16px 28px;
       border-radius: 60px;
       text-decoration: none;
       color: white;
-      font-weight: 600;
-      font-size: 1.2rem;
+      font-weight: 500;
+      font-size: 1.1rem;
       transition: all 0.3s;
       cursor: pointer;
-      border: 1px solid rgba(230, 57, 70, 0.3);
+      border: 1px solid rgba(230, 57, 70, 0.2);
       display: flex;
       align-items: center;
       gap: 15px;
       justify-content: center;
     }
     .menu-option:hover {
-      background: #e63946;
-      transform: translateX(12px);
-      border-color: #e63946;
+      background: linear-gradient(135deg, #e63946, #ff6b4a);
+      transform: translateX(8px);
+      border-color: transparent;
+      box-shadow: 0 5px 20px rgba(230,57,70,0.4);
     }
     .close-menu {
       margin-top: 35px;
       background: transparent;
-      border: 2px solid #e63946;
+      border: 1px solid rgba(230, 57, 70, 0.5);
       color: white;
-      padding: 12px 28px;
+      padding: 12px 32px;
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s;
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 0.9rem;
+      font-weight: 500;
     }
     .close-menu:hover {
-      background: #e63946;
-      transform: scale(1.05);
+      background: rgba(230, 57, 70, 0.2);
+      border-color: #e63946;
     }
     
-    /* Main Content Area - Pages */
+    /* Page Transitions */
     .page-container {
-      margin-top: 110px;
-      min-height: calc(100vh - 110px);
+      margin-top: 100px;
+      min-height: calc(100vh - 100px);
       padding-bottom: 60px;
     }
     .page {
       display: none;
-      animation: pageFadeIn 0.6s ease;
+      animation: pageReveal 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     .page.active {
       display: block;
     }
-    @keyframes pageFadeIn {
+    @keyframes pageReveal {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    
+    /* Letter-by-letter animation class */
+    .letter-animate {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .letter-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(25px);
+      transition: all 0.08s cubic-bezier(0.2, 0.9, 0.4, 1.2);
     }
     
-    /* Hero Section */
+    /* Premium Hero */
     .hero {
-      background: linear-gradient(135deg, #111 0%, #1f1f1f 100%);
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
       padding: 80px 60px;
       border-radius: 48px;
       margin-bottom: 50px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(230,57,70,0.2);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(230,57,70,0.05) 0%, transparent 70%);
+      animation: rotateGlow 20s linear infinite;
+    }
+    @keyframes rotateGlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     .hero-grid {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 60px;
+      position: relative;
+      z-index: 2;
     }
     .hero-text {
       flex: 1;
     }
     .hero-text h2 {
-      font-size: 3.5rem;
+      font-size: 3.8rem;
       font-weight: 800;
+      font-family: 'Cormorant Garamond', serif;
       line-height: 1.2;
       margin-bottom: 20px;
     }
-    .hero-text p {
-      margin: 25px 0;
-      font-size: 1.2rem;
-      color: #ccc;
-      line-height: 1.6;
-    }
     .hero-badge {
-      background: #e63946;
+      background: linear-gradient(135deg, #e63946, #ff8c42);
       display: inline-block;
-      padding: 8px 20px;
+      padding: 8px 24px;
       border-radius: 40px;
-      font-size: 0.9rem;
-      font-weight: bold;
+      font-size: 0.85rem;
+      font-weight: 600;
       margin-bottom: 25px;
+      letter-spacing: 1px;
     }
-    .hero-icon {
-      flex: 1;
-      text-align: center;
-      font-size: 12rem;
-      color: #e63946;
-      opacity: 0.8;
-    }
-    
     .section-title {
       font-size: 2.8rem;
-      font-weight: 800;
+      font-weight: 700;
+      font-family: 'Cormorant Garamond', serif;
       margin-bottom: 45px;
       position: relative;
       display: inline-block;
@@ -254,61 +363,67 @@
       position: absolute;
       bottom: -12px;
       left: 0;
-      width: 80px;
-      height: 4px;
-      background: #e63946;
+      width: 70px;
+      height: 3px;
+      background: linear-gradient(90deg, #e63946, #ff8c42);
     }
     
     /* Rooms Grid */
     .rooms-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 45px;
       margin-top: 30px;
     }
     .room-card {
-      background: #1e1e1e;
+      background: linear-gradient(145deg, #141414, #0e0e0e);
       border-radius: 32px;
       overflow: hidden;
-      transition: all 0.3s;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      border: 1px solid rgba(230,57,70,0.15);
     }
     .room-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transform: translateY(-10px);
+      box-shadow: 0 30px 50px rgba(0,0,0,0.5);
+      border-color: rgba(230,57,70,0.4);
     }
     .room-img-gallery {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 3px;
-      cursor: pointer;
+      gap: 2px;
+    }
+    .room-img-gallery a {
+      display: block;
+      overflow: hidden;
     }
     .room-img-gallery img {
       width: 100%;
-      height: 180px;
+      height: 170px;
       object-fit: cover;
-      transition: all 0.3s;
+      transition: transform 0.6s ease;
     }
     .room-img-gallery img:hover {
-      opacity: 0.85;
-      transform: scale(1.02);
+      transform: scale(1.08);
     }
     .room-info {
-      padding: 25px;
+      padding: 28px;
     }
     .price {
       font-size: 2.2rem;
       font-weight: 800;
-      color: #e63946;
+      background: linear-gradient(135deg, #e63946, #ff8c42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       margin-bottom: 8px;
     }
     .btn-whatsapp-room {
-      background: #25D366;
+      background: linear-gradient(135deg, #25D366, #128C7E);
       color: white;
       border: none;
       padding: 14px 20px;
       border-radius: 50px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -317,44 +432,39 @@
       text-decoration: none;
       width: 100%;
       margin-top: 20px;
-      font-size: 1rem;
       transition: all 0.3s;
     }
     .btn-whatsapp-room:hover {
-      background: #128C7E;
       transform: scale(1.02);
+      box-shadow: 0 5px 20px rgba(37,211,102,0.4);
     }
     
-    /* Amenities */
     .amenities-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 18px;
+      gap: 16px;
       margin-top: 30px;
     }
     .amenity-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: #2a2a2a;
-      padding: 12px 24px;
+      background: rgba(30,30,30,0.7);
+      padding: 10px 24px;
       border-radius: 60px;
-      font-size: 1rem;
+      font-size: 0.9rem;
       transition: all 0.3s;
+      border: 1px solid rgba(230,57,70,0.2);
     }
     .amenity-item:hover {
-      background: #e63946;
+      background: rgba(230,57,70,0.2);
       transform: translateY(-3px);
     }
     .amenity-item i {
-      font-size: 1.4rem;
       color: #e63946;
     }
-    .amenity-item:hover i {
-      color: white;
-    }
     
-    /* Gallery Grid */
+    /* Gallery */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -364,20 +474,20 @@
     .gallery-item {
       border-radius: 28px;
       overflow: hidden;
-      height: 260px;
+      height: 280px;
       position: relative;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.5s;
     }
     .gallery-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: all 0.4s;
+      transition: transform 0.7s ease;
     }
     .gallery-item:hover {
-      transform: scale(1.03);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+      transform: scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     }
     .gallery-item:hover img {
       transform: scale(1.05);
@@ -389,15 +499,15 @@
       width: 100%;
       padding: 20px 15px 15px;
       text-align: center;
-      font-size: 1rem;
       font-weight: 600;
     }
     
-    /* Review Board */
+    /* Reviews */
     .review-board {
-      background: #1e1e1e;
+      background: linear-gradient(145deg, #141414, #0e0e0e);
       border-radius: 40px;
-      padding: 40px;
+      padding: 45px;
+      border: 1px solid rgba(230,57,70,0.15);
     }
     .rating-stars {
       display: flex;
@@ -408,27 +518,19 @@
     .stars {
       font-size: 2rem;
       letter-spacing: 5px;
+      color: #ffc107;
     }
     .review-card {
-      background: #2a2a2a;
+      background: rgba(30,30,30,0.6);
       padding: 25px;
       border-radius: 28px;
       margin-bottom: 20px;
       transition: all 0.3s;
+      border-left: 3px solid #e63946;
     }
     .review-card:hover {
       transform: translateX(8px);
-      background: #353535;
-    }
-    .review-form input, .review-form textarea, .review-form select {
-      width: 100%;
-      background: #2c2c2c;
-      border: 1px solid #444;
-      padding: 14px;
-      border-radius: 28px;
-      color: white;
-      margin: 10px 0;
-      font-size: 1rem;
+      background: rgba(40,40,40,0.8);
     }
     
     /* Map */
@@ -436,15 +538,16 @@
       height: 480px;
       width: 100%;
       border-radius: 32px;
-      border: 3px solid #e63946;
+      border: 2px solid rgba(230,57,70,0.3);
       margin-top: 30px;
     }
     
     /* Footer */
     footer {
-      background: #0a0a0a;
+      background: #050505;
       padding: 60px 0 30px;
       margin-top: 60px;
+      border-top: 1px solid rgba(230,57,70,0.2);
     }
     .footer-grid {
       display: grid;
@@ -455,15 +558,12 @@
     .footer-col h4 {
       color: #e63946;
       margin-bottom: 25px;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
+      font-weight: 600;
     }
-    .footer-col ul {
-      list-style: none;
-    }
-    .footer-col li, .footer-col a {
+    .footer-col a {
       color: #bbb;
       text-decoration: none;
-      line-height: 2.2;
       transition: 0.2s;
     }
     .footer-col a:hover {
@@ -471,10 +571,9 @@
       padding-left: 5px;
     }
     .social-icons a {
-      font-size: 2rem;
+      font-size: 1.8rem;
       margin-right: 20px;
       color: white;
-      display: inline-block;
       transition: all 0.3s;
     }
     .social-icons a:hover {
@@ -491,40 +590,37 @@
       color: white;
       text-decoration: none;
       margin-top: 20px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .footer-whatsapp a:hover {
-      transform: scale(1.05);
-      background: #128C7E;
     }
     
     @media (max-width: 768px) {
       .container { padding: 0 20px; }
-      .logo-main { font-size: 2rem; }
-      .logo-sub { font-size: 0.8rem; }
+      .hero-text h2 { font-size: 2.2rem; }
       .hero { padding: 40px 25px; }
-      .hero-text h2 { font-size: 2rem; }
-      .hero-icon { font-size: 6rem; }
       .section-title { font-size: 2rem; }
-      .rooms-grid { grid-template-columns: 1fr; gap: 30px; }
-      .menu-container { padding: 30px 20px; }
-      .menu-option { padding: 14px 20px; font-size: 1rem; }
-      .gallery-grid { grid-template-columns: 1fr; }
-      .footer-grid { gap: 30px; }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .menu-container { padding: 35px 25px; }
     }
   </style>
 </head>
 <body>
 
+<!-- Elegant Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">RETEMA</div>
+  <div class="loading-bar-container">
+    <div class="loading-bar"></div>
+  </div>
+  <div class="loading-sub">premium student living</div>
+</div>
+
 <header>
   <div class="container nav-flex">
     <div class="logo" id="logoHome">
-      <span class="logo-main">Retema</span>
+      <span class="logo-main">RETEMA</span>
       <span class="logo-sub">accommodation</span>
     </div>
     <button class="menu-btn" id="menuButton">
-      <i class="fas fa-bars"></i> Menu
+      <i class="fas fa-gem"></i> EXPLORE
     </button>
   </div>
 </header>
@@ -532,7 +628,7 @@
 <!-- Overlay Menu -->
 <div class="menu-overlay" id="menuOverlay">
   <div class="menu-container">
-    <h2><i class="fas fa-compass"></i> Navigate</h2>
+    <h2><i class="fas fa-crown"></i> Navigate</h2>
     <div class="menu-options">
       <div class="menu-option" data-page="home"><i class="fas fa-home"></i> Home</div>
       <div class="menu-option" data-page="about"><i class="fas fa-info-circle"></i> About Us</div>
@@ -542,11 +638,11 @@
       <div class="menu-option" data-page="map"><i class="fas fa-map-marker-alt"></i> Location Map</div>
       <div class="menu-option" data-page="contact"><i class="fas fa-phone-alt"></i> Contact</div>
     </div>
-    <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i> Close Menu</button>
+    <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i> Close</button>
   </div>
 </div>
 
-<!-- Main Content - Pages -->
+<!-- Main Content -->
 <div class="page-container">
   <!-- Home Page -->
   <div class="page active" id="home-page">
@@ -554,21 +650,21 @@
       <div class="hero">
         <div class="hero-grid">
           <div class="hero-text">
-            <div class="hero-badge">🏠 Maungani | UNIVEN Maungani Gate</div>
-            <h2>Live, Study, Thrive<br> at <span style="color:#e63946">Retema</span></h2>
-            <p>Premium student accommodation for funded & unfunded students. Only steps from University of Venda. Safe, modern & built for success with 24/7 security, unlimited WiFi, and all amenities included.</p>
-            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-              <button class="menu-btn" style="background: #e63946;" id="exploreBtn">Explore Rooms <i class="fas fa-arrow-right"></i></button>
+            <div class="hero-badge">✦ MAUNGANI | UNIVEN MAIN GATE ✦</div>
+            <h2 class="letter-animate" id="heroTitle">Live, Study, Thrive<br> at <span style="color:#e63946">Retema</span></h2>
+            <p class="letter-animate" id="heroDesc">Premium student accommodation for funded & unfunded students. Steps from University of Venda. Safe, modern & built for success.</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 25px;">
+              <button class="menu-btn" style="background: linear-gradient(135deg, #e63946, #ff6b4a);" id="exploreBtn">Explore Rooms <i class="fas fa-arrow-right"></i></button>
               <button class="menu-btn" style="background: transparent; border: 2px solid #e63946;" id="contactBtn">Contact Us</button>
             </div>
-            <div style="margin-top: 30px; display: flex; gap: 25px; flex-wrap: wrap;">
+            <div style="margin-top: 35px; display: flex; gap: 25px; flex-wrap: wrap;">
               <span><i class="fas fa-check-circle" style="color:#e63946"></i> NSFAS & Bursary friendly</span>
-              <span><i class="fas fa-moon"></i> Sleepovers allowed</span>
               <span><i class="fas fa-wifi"></i> Free unlimited WiFi</span>
+              <span><i class="fas fa-shield-alt"></i> 24/7 Security</span>
             </div>
           </div>
-          <div class="hero-icon">
-            <i class="fas fa-building"></i>
+          <div class="hero-icon" style="flex:1; text-align:center;">
+            <i class="fas fa-building" style="font-size: 10rem; color: rgba(230,57,70,0.6);"></i>
           </div>
         </div>
       </div>
@@ -578,40 +674,19 @@
   <!-- About Page -->
   <div class="page" id="about-page">
     <div class="container">
-      <h1 class="section-title">About Retema</h1>
-      <div style="background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%); padding: 45px; border-radius: 40px; margin-bottom: 40px;">
-        <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 30px;">We offer premium, secure student living at Maungani, just next to University of Venda Maungani Gate. Every unit includes <strong>in-suite stoves, fridges, laundry sites, tuckshop, parking, 24/7 CCTV, tight security, communal kitchen, unlimited WiFi, and continuous hot water.</strong></p>
-        <p style="font-size: 1.1rem; color: #ccc;">Whether funded by NSFAS or private, we ensure comfort and academic focus. Our residence is designed to provide the perfect balance between studying and relaxation.</p>
+      <h1 class="section-title letter-animate">About Retema</h1>
+      <div style="background: linear-gradient(135deg, #141414, #0a0a0a); padding: 50px; border-radius: 40px; margin-bottom: 40px;">
+        <p style="font-size: 1.2rem; line-height: 1.8;">We offer premium, secure student living at Maungani, just next to University of Venda Main Gate. Every unit includes <strong>in-suite stoves, fridges, laundry sites, tuckshop, parking, 24/7 CCTV, tight security, unlimited WiFi, and continuous hot water.</strong></p>
       </div>
-      
-      <h3 style="color: #e63946; margin: 40px 0 25px; font-size: 1.8rem;">✨ All Amenities</h3>
-      <div class="amenities-list">
-        <div class="amenity-item"><i class="fas fa-wifi"></i> Unlimited WiFi</div>
-        <div class="amenity-item"><i class="fas fa-tshirt"></i> Laundry Site</div>
-        <div class="amenity-item"><i class="fas fa-fire"></i> Stove & Fridge</div>
-        <div class="amenity-item"><i class="fas fa-store"></i> Tuckshop</div>
-        <div class="amenity-item"><i class="fas fa-car"></i> Secure Parking</div>
-        <div class="amenity-item"><i class="fas fa-video"></i> 24/7 CCTV</div>
-        <div class="amenity-item"><i class="fas fa-shield-alt"></i> Tight Security</div>
-        <div class="amenity-item"><i class="fas fa-utensils"></i> Communal Kitchen</div>
-        <div class="amenity-item"><i class="fas fa-hot-tub"></i> Hot Water 24/7</div>
-        <div class="amenity-item"><i class="fas fa-bed"></i> In-suite Rooms</div>
-        <div class="amenity-item"><i class="fas fa-toilet"></i> Showers</div>
-        <div class="amenity-item"><i class="fas fa-snowplow"></i> Backup Water</div>
-      </div>
-      
-      <div style="margin-top: 40px; background: linear-gradient(135deg, #e6394622 0%, #e6394608 100%); padding: 25px 35px; border-radius: 40px; border-left: 4px solid #e63946;">
-        <i class="fas fa-users" style="font-size: 1.5rem; color: #e63946;"></i>
-        <strong style="margin-left: 10px; font-size: 1.2rem;">Sleepovers allowed</strong>
-        <p style="margin-top: 12px; color: #ccc;">We understand the importance of social connection. Guests are welcome with prior arrangement and adherence to our guest policy.</p>
-      </div>
+      <h3 style="color: #e63946; margin: 40px 0 25px;">✨ All Amenities</h3>
+      <div class="amenities-list" id="amenitiesList"></div>
     </div>
   </div>
 
   <!-- Rooms Page -->
   <div class="page" id="rooms-page">
     <div class="container">
-      <h1 class="section-title">Rooms to choose from</h1>
+      <h1 class="section-title letter-animate">Rooms to choose from</h1>
       <div class="rooms-grid" id="roomsContainer"></div>
     </div>
   </div>
@@ -619,7 +694,7 @@
   <!-- Gallery Page -->
   <div class="page" id="gallery-page">
     <div class="container">
-      <h1 class="section-title">Facilities & Common Areas</h1>
+      <h1 class="section-title letter-animate">Facilities & Common Areas</h1>
       <div class="gallery-grid" id="facilityGallery"></div>
     </div>
   </div>
@@ -627,28 +702,26 @@
   <!-- Reviews Page -->
   <div class="page" id="reviews-page">
     <div class="container">
-      <h1 class="section-title">Ratings & Reviews</h1>
+      <h1 class="section-title letter-animate">Ratings & Reviews</h1>
       <div class="review-board">
         <div class="rating-stars">
           <div class="stars" id="avgStars">★★★★★</div>
           <span id="avgRatingDisplay" style="font-size: 1.5rem; font-weight: 700;">5.0</span>
           <span style="color: #888;">(<span id="reviewCount">0</span> reviews)</span>
         </div>
-        <div id="reviewsList">
-          <div class="review-card"><i>No reviews yet. Be the first to share your experience!</i></div>
-        </div>
+        <div id="reviewsList"></div>
         <div class="review-form" style="margin-top: 35px;">
-          <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Write a review</h3>
-          <input type="text" id="reviewerName" placeholder="Your name">
-          <select id="reviewRating">
+          <h3 style="margin-bottom: 20px;">Write a review</h3>
+          <input type="text" id="reviewerName" placeholder="Your name" style="width:100%; background:#2a2a2a; border:none; padding:14px; border-radius:28px; color:white; margin:10px 0;">
+          <select id="reviewRating" style="width:100%; background:#2a2a2a; border:none; padding:14px; border-radius:28px; color:white;">
             <option value="5">★★★★★ (5) - Excellent</option>
             <option value="4">★★★★☆ (4) - Very Good</option>
             <option value="3">★★★☆☆ (3) - Good</option>
             <option value="2">★★☆☆☆ (2) - Fair</option>
             <option value="1">★☆☆☆☆ (1) - Poor</option>
           </select>
-          <textarea id="reviewComment" rows="4" placeholder="Tell us about your stay..."></textarea>
-          <button class="menu-btn" id="submitReview" style="background: #e63946; width: auto; padding: 14px 35px;">Submit Review</button>
+          <textarea id="reviewComment" rows="4" placeholder="Tell us about your stay..." style="width:100%; background:#2a2a2a; border:none; padding:14px; border-radius:28px; color:white; margin:10px 0;"></textarea>
+          <button class="menu-btn" id="submitReview" style="background:#e63946; width:auto; padding:12px 35px;">Submit Review</button>
         </div>
       </div>
     </div>
@@ -657,41 +730,26 @@
   <!-- Map Page -->
   <div class="page" id="map-page">
     <div class="container">
-      <h1 class="section-title">Where you will be</h1>
-      <p style="font-size: 1.1rem; margin-bottom: 20px;">📍 <strong>Maungani, near University of Venda Main Gate – R523, Thohoyandou</strong></p>
+      <h1 class="section-title letter-animate">Where you will be</h1>
+      <p style="margin-bottom: 20px;">📍 <strong>Maungani, near University of Venda Main Gate – R523, Thohoyandou</strong></p>
       <div id="map"></div>
-      <div style="margin-top: 25px;">
-        <a href="https://maps.google.com/?q=University+of+Venda+Maungani+Gate+Thohoyandou" target="_blank" class="menu-btn" style="background: transparent; border: 2px solid #e63946; text-decoration: none; display: inline-flex;">
-          <i class="fas fa-map-marker-alt"></i> Open in Google Maps
-        </a>
-      </div>
     </div>
   </div>
 
   <!-- Contact Page -->
   <div class="page" id="contact-page">
     <div class="container">
-      <h1 class="section-title">Contact Us</h1>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; margin-top: 40px;">
-        <div style="background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%); padding: 40px; border-radius: 32px; text-align: center; transition: all 0.3s;">
-          <i class="fas fa-phone-alt" style="font-size: 3.5rem; color: #e63946;"></i>
-          <h3 style="margin: 20px 0 15px; font-size: 1.5rem;">Phone</h3>
-          <p><a href="tel:+27662672037" style="color: white; text-decoration: none; font-size: 1.2rem;">+27 66 267 2037</a></p>
+      <h1 class="section-title letter-animate">Contact Us</h1>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; margin-top: 40px;">
+        <div style="background: linear-gradient(145deg, #141414, #0e0e0e); padding: 40px; border-radius: 32px; text-align: center;">
+          <i class="fas fa-phone-alt" style="font-size: 3rem; color: #e63946;"></i>
+          <h3 style="margin: 20px 0;">Phone</h3>
+          <p><a href="tel:+27662672037" style="color: white;">+27 66 267 2037</a></p>
         </div>
-        <div style="background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%); padding: 40px; border-radius: 32px; text-align: center; transition: all 0.3s;">
-          <i class="fab fa-whatsapp" style="font-size: 3.5rem; color: #25D366;"></i>
-          <h3 style="margin: 20px 0 15px; font-size: 1.5rem;">WhatsApp</h3>
-          <p><a href="https://wa.me/27662672037" target="_blank" style="color: #25D366; font-size: 1.2rem;">Click to chat</a></p>
-        </div>
-        <div style="background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%); padding: 40px; border-radius: 32px; text-align: center; transition: all 0.3s;">
-          <i class="fas fa-envelope" style="font-size: 3.5rem; color: #e63946;"></i>
-          <h3 style="margin: 20px 0 15px; font-size: 1.5rem;">Email</h3>
-          <p><a href="mailto:info@retema.co.za" style="color: white; font-size: 1.2rem;">info@retema.co.za</a></p>
-        </div>
-        <div style="background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%); padding: 40px; border-radius: 32px; text-align: center; transition: all 0.3s;">
-          <i class="fas fa-map-marker-alt" style="font-size: 3.5rem; color: #e63946;"></i>
-          <h3 style="margin: 20px 0 15px; font-size: 1.5rem;">Address</h3>
-          <p style="color: #ccc;">Maungani, UNIVEN Main Gate<br>Thohoyandou, Limpopo, South Africa</p>
+        <div style="background: linear-gradient(145deg, #141414, #0e0e0e); padding: 40px; border-radius: 32px; text-align: center;">
+          <i class="fab fa-whatsapp" style="font-size: 3rem; color: #25D366;"></i>
+          <h3 style="margin: 20px 0;">WhatsApp</h3>
+          <p><a href="https://wa.me/27662672037" target="_blank" style="color: #25D366;">Click to chat</a></p>
         </div>
       </div>
     </div>
@@ -703,46 +761,15 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Quick Links</h4>
-        <ul>
-          <li><a href="#">Help Centre</a></li>
-          <li><a href="#">Browse accommodations</a></li>
-          <li><a href="#">Landlord registration</a></li>
-          <li><a href="#">Student registration</a></li>
-        </ul>
+        <ul style="list-style:none;"><li><a href="#">Help Centre</a></li><li><a href="#">Student registration</a></li></ul>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#">About us</a></li>
-          <li><a href="#">FAQs</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Privacy policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Connect with us</h4>
-        <div class="social-icons">
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-        <div class="footer-whatsapp">
-          <a href="https://wa.me/27662672037" target="_blank">
-            <i class="fab fa-whatsapp"></i> +27 66 267 2037
-          </a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Subscribe</h4>
-        <input type="email" placeholder="Your email..." id="subEmail" style="padding: 12px; border-radius: 50px; border: none; width: 100%; background: #2c2c2c; color: white;">
-        <button class="menu-btn" id="subBtn" style="margin-top: 12px; width: 100%; padding: 12px;">Subscribe</button>
-        <p style="font-size: 0.8rem; margin-top: 10px; color: #888;">(coming soon)</p>
+        <h4>Connect</h4>
+        <div class="social-icons"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div>
+        <div class="footer-whatsapp"><a href="https://wa.me/27662672037" target="_blank"><i class="fab fa-whatsapp"></i> +27 66 267 2037</a></div>
       </div>
     </div>
-    <div style="text-align: center; border-top: 1px solid #2c2c2c; padding-top: 30px; margin-top: 30px;">
-      <p>© 2025 Retema Student Accommodation. All Rights Reserved.</p>
-    </div>
+    <div style="text-align: center; padding-top: 30px;"><p>© 2025 Retema Student Accommodation. All Rights Reserved.</p></div>
   </div>
 </footer>
 
@@ -751,7 +778,7 @@
 <script>
   const WHATSAPP_NUMBER = "27662672037";
   
-  // Room data with 4 images each
+  // Room data
   const roomPrices = [3700, 2500, 2300, 2000, 1700, 1300];
   const roomImages = [
     ['https://picsum.photos/id/164/800/600', 'https://picsum.photos/id/169/800/600', 'https://picsum.photos/id/175/800/600', 'https://picsum.photos/id/156/800/600'],
@@ -768,58 +795,51 @@
     if (!container) return;
     container.innerHTML = '';
     roomPrices.forEach((price, idx) => {
-      const card = document.createElement('div');
-      card.className = 'room-card';
       let imgsHtml = '';
       for (let i = 0; i < 4; i++) {
-        imgsHtml += `<a href="${roomImages[idx][i]}" data-lightbox="room-${idx}" data-title="${roomTitles[idx]} - R${price}/month"><img src="${roomImages[idx][i]}" alt="Room view ${i+1}"></a>`;
+        imgsHtml += `<a href="${roomImages[idx][i]}" data-lightbox="room-${idx}" data-title="${roomTitles[idx]} - R${price}/month"><img src="${roomImages[idx][i]}" alt="Room view"></a>`;
       }
-      const nsfasText = (price <= 2500) ? '<span style="background:#2c2c2c; display:inline-block; padding:5px 14px; border-radius:30px; font-size:0.75rem;">🏅 NSFAS Friendly</span>' : '<span style="background:#2c2c2c; display:inline-block; padding:5px 14px; border-radius:30px; font-size:0.75rem;">💰 Bursary / Cash</span>';
       const whatsappMsg = `Hello! I'm interested in the R${price} ${roomTitles[idx]} at Retema. Please let me know availability.`;
       const roomWhatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMsg)}`;
-      
       card.innerHTML = `
         <div class="room-img-gallery">${imgsHtml}</div>
         <div class="room-info">
           <div class="price">R ${price.toLocaleString()} <small>/month</small></div>
-          <div style="font-weight: 700; margin: 8px 0; font-size: 1.1rem;">${roomTitles[idx]}</div>
-          ${nsfasText}
-          <div style="margin: 15px 0; display: flex; gap: 15px; font-size: 0.85rem; color: #aaa;">
+          <div style="font-weight: 700; margin: 8px 0;">${roomTitles[idx]}</div>
+          <div style="margin: 15px 0; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
             <span><i class="fas fa-shower"></i> En-suite</span>
-            <span><i class="fas fa-wifi"></i> WiFi included</span>
-            <span><i class="fas fa-bed"></i> Fully furnished</span>
+            <span><i class="fas fa-wifi"></i> WiFi</span>
           </div>
-          <a href="${roomWhatsappLink}" target="_blank" class="btn-whatsapp-room">
-            <i class="fab fa-whatsapp"></i> Book Now / Interested
-          </a>
+          <a href="${roomWhatsappLink}" target="_blank" class="btn-whatsapp-room"><i class="fab fa-whatsapp"></i> Book Now</a>
         </div>
       `;
       container.appendChild(card);
     });
   }
   
-  // Facility Gallery with lightbox
-  const facilityImgs = [
-    'https://picsum.photos/id/26/800/600', 'https://picsum.photos/id/28/800/600', 'https://picsum.photos/id/39/800/600',
-    'https://picsum.photos/id/40/800/600', 'https://picsum.photos/id/48/800/600', 'https://picsum.photos/id/58/800/600'
-  ];
-  const facilityNames = ['Laundry Area', 'Modern Kitchen', 'Tuckshop', 'Secure Parking', 'CCTV Surveillance', 'Study & Lounge'];
+  // Amenities
+  const amenities = ['Unlimited WiFi', 'Laundry Site', 'Stove & Fridge', 'Tuckshop', 'Secure Parking', '24/7 CCTV', 'Tight Security', 'Communal Kitchen', 'Hot Water 24/7', 'In-suite Rooms', 'Backup Water'];
+  function renderAmenities() {
+    const container = document.getElementById('amenitiesList');
+    if(container) {
+      container.innerHTML = amenities.map(a => `<div class="amenity-item"><i class="fas fa-check-circle"></i> ${a}</div>`).join('');
+    }
+  }
   
+  // Gallery
+  const facilityImgs = ['https://picsum.photos/id/26/800/600', 'https://picsum.photos/id/28/800/600', 'https://picsum.photos/id/39/800/600', 'https://picsum.photos/id/40/800/600', 'https://picsum.photos/id/48/800/600', 'https://picsum.photos/id/58/800/600'];
+  const facilityNames = ['Laundry Area', 'Modern Kitchen', 'On-site Tuckshop', 'Secure Parking', 'CCTV Surveillance', 'Study & Lounge'];
   function renderGallery() {
     const galleryDiv = document.getElementById('facilityGallery');
     if (!galleryDiv) return;
-    galleryDiv.innerHTML = '';
-    facilityImgs.forEach((img, idx) => {
-      const item = document.createElement('div');
-      item.className = 'gallery-item';
-      item.innerHTML = `
+    galleryDiv.innerHTML = facilityImgs.map((img, idx) => `
+      <div class="gallery-item">
         <a href="${img}" data-lightbox="facility" data-title="${facilityNames[idx]}">
           <img src="${img}" alt="${facilityNames[idx]}">
           <div class="gallery-caption">${facilityNames[idx]}</div>
         </a>
-      `;
-      galleryDiv.appendChild(item);
-    });
+      </div>
+    `).join('');
   }
   
   // Page Navigation
@@ -830,70 +850,51 @@
   const pages = document.querySelectorAll('.page');
   
   function showPage(pageId) {
-    pages.forEach(page => {
-      page.classList.remove('active');
-    });
+    pages.forEach(page => page.classList.remove('active'));
     const activePage = document.getElementById(`${pageId}-page`);
-    if (activePage) {
-      activePage.classList.add('active');
-    }
+    if (activePage) activePage.classList.add('active');
     menuOverlay.classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Trigger letter animation on visible elements
+    setTimeout(() => triggerLetterAnimation(), 100);
   }
   
-  menuButton.addEventListener('click', () => {
-    menuOverlay.classList.add('active');
-  });
+  menuButton?.addEventListener('click', () => menuOverlay.classList.add('active'));
+  closeMenu?.addEventListener('click', () => menuOverlay.classList.remove('active'));
+  menuOptions.forEach(option => option.addEventListener('click', () => showPage(option.getAttribute('data-page'))));
+  document.getElementById('logoHome')?.addEventListener('click', () => showPage('home'));
+  document.getElementById('exploreBtn')?.addEventListener('click', () => showPage('rooms'));
+  document.getElementById('contactBtn')?.addEventListener('click', () => showPage('contact'));
+  menuOverlay?.addEventListener('click', (e) => { if (e.target === menuOverlay) menuOverlay.classList.remove('active'); });
   
-  closeMenu.addEventListener('click', () => {
-    menuOverlay.classList.remove('active');
-  });
-  
-  menuOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      const pageId = option.getAttribute('data-page');
-      showPage(pageId);
+  // Letter-by-letter animation trigger
+  function triggerLetterAnimation() {
+    document.querySelectorAll('.letter-animate').forEach(el => {
+      if (!el.classList.contains('visible') && el.isConnected) {
+        const text = el.innerText;
+        el.innerHTML = text.split('').map(char => `<span class="letter">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
+        el.classList.add('visible');
+        const letters = el.querySelectorAll('.letter');
+        letters.forEach((letter, i) => {
+          setTimeout(() => {
+            letter.style.opacity = '1';
+            letter.style.transform = 'translateY(0)';
+          }, i * 35);
+        });
+      }
     });
-  });
+  }
   
-  document.getElementById('logoHome')?.addEventListener('click', () => {
-    showPage('home');
-  });
-  
-  document.getElementById('exploreBtn')?.addEventListener('click', () => {
-    showPage('rooms');
-  });
-  
-  document.getElementById('contactBtn')?.addEventListener('click', () => {
-    showPage('contact');
-  });
-  
-  // Close overlay when clicking outside
-  menuOverlay.addEventListener('click', (e) => {
-    if (e.target === menuOverlay) {
-      menuOverlay.classList.remove('active');
-    }
-  });
-  
-  // Review System
-  let reviews = [];
-  
+  // Reviews System
+  let reviews = [{ name: "Thabo M.", rating: 5, comment: "Amazing place, super close to UNIVEN gate. WiFi is fast, security is top-notch!", date: "2025-02-15" }];
   function updateReviewsUI() {
     const reviewsDiv = document.getElementById('reviewsList');
     const countSpan = document.getElementById('reviewCount');
     const avgStarsSpan = document.getElementById('avgStars');
     const avgNumSpan = document.getElementById('avgRatingDisplay');
     if (!reviewsDiv) return;
-    
-    if (reviews.length === 0) {
-      reviewsDiv.innerHTML = '<div class="review-card"><i>No reviews yet. Be the first to review this accommodation.</i></div>';
-      if (avgStarsSpan) avgStarsSpan.innerHTML = '☆☆☆☆☆';
-      if (avgNumSpan) avgNumSpan.innerText = '0';
-      if (countSpan) countSpan.innerText = '0';
-      return;
-    }
-    let total = 0;
-    reviews.forEach(r => total += r.rating);
+    if (reviews.length === 0) { reviewsDiv.innerHTML = '<div class="review-card"><i>No reviews yet.</i></div>'; return; }
+    let total = reviews.reduce((s,r) => s + r.rating, 0);
     const avg = total / reviews.length;
     const fullStars = Math.round(avg);
     let starStr = '';
@@ -901,70 +902,70 @@
     if (avgStarsSpan) avgStarsSpan.innerHTML = starStr;
     if (avgNumSpan) avgNumSpan.innerText = avg.toFixed(1);
     if (countSpan) countSpan.innerText = reviews.length;
-    
-    let html = '';
-    reviews.slice().reverse().forEach(r => {
+    reviewsDiv.innerHTML = reviews.slice().reverse().map(r => {
       let revStars = '';
       for (let i = 1; i <= 5; i++) revStars += i <= r.rating ? '★' : '☆';
-      html += `<div class="review-card"><strong style="font-size: 1.1rem;">${r.name}</strong> ${revStars}<br><p style="margin-top: 12px;">${r.comment}</p><br><span style="font-size:12px; color:#888;">📅 ${r.date}</span></div>`;
-    });
-    reviewsDiv.innerHTML = html;
+      return `<div class="review-card"><strong>${r.name}</strong> ${revStars}<br><p style="margin-top:12px;">${r.comment}</p><span style="font-size:12px; color:#888;">${r.date}</span></div>`;
+    }).join('');
   }
-  
   document.getElementById('submitReview')?.addEventListener('click', () => {
     const name = document.getElementById('reviewerName')?.value.trim();
     const rating = parseInt(document.getElementById('reviewRating')?.value);
     const comment = document.getElementById('reviewComment')?.value.trim();
-    if (!name || !comment) {
-      alert('Please enter your name and review comment.');
-      return;
-    }
+    if (!name || !comment) { alert('Please enter your name and review.'); return; }
     reviews.push({ name, rating, comment, date: new Date().toLocaleDateString('en-ZA') });
     updateReviewsUI();
-    if (document.getElementById('reviewerName')) document.getElementById('reviewerName').value = '';
-    if (document.getElementById('reviewComment')) document.getElementById('reviewComment').value = '';
+    document.getElementById('reviewerName').value = '';
+    document.getElementById('reviewComment').value = '';
     alert('Thank you for your review!');
   });
   
-  document.getElementById('subBtn')?.addEventListener('click', () => {
-    const email = document.getElementById('subEmail')?.value;
-    if (email && email.includes('@')) {
-      alert(`Thanks for subscribing! ${email} (coming soon)`);
-      document.getElementById('subEmail').value = '';
-    } else {
-      alert('Please enter a valid email address');
-    }
-  });
-  
-  // Map
+  // Map with exact coordinates from first website
   function initMap() {
     const mapDiv = document.getElementById('map');
     if (mapDiv && typeof L !== 'undefined') {
-      const univenGate = [-22.978, 30.445];
-      const map = L.map('map').setView(univenGate, 16);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        subdomains: 'abcd',
-        maxZoom: 19
-      }).addTo(map);
-      L.marker(univenGate).addTo(map).bindPopup('<b>🏠 Retema Student Accommodation</b><br>Maungani, UNIVEN Main Gate<br>📍 Just minutes from campus');
+      const location = [-22.978815, 30.433430]; // Updated coordinates
+      const map = L.map('map').setView(location, 17);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      L.marker(location).addTo(map).bindPopup('<b>🏠 Retema Student Accommodation</b><br>Maungani, UNIVEN Main Gate<br>📍 Premium student living');
     }
   }
   
   // Initialize everything
   renderRooms();
+  renderAmenities();
   renderGallery();
+  updateReviewsUI();
+  
   setTimeout(() => {
     initMap();
+    triggerLetterAnimation();
   }, 500);
   
-  // Sample review
+  // Hide loading screen
   setTimeout(() => {
-    if (reviews.length === 0) {
-      reviews.push({ name: "Thabo M.", rating: 5, comment: "Amazing place, super close to UNIVEN gate. WiFi is fast, security is top-notch, and the rooms are clean and modern!", date: "2025-02-15" });
-      updateReviewsUI();
-    }
-  }, 500);
+    document.getElementById('loadingScreen')?.classList.add('hidden');
+  }, 2000);
+  
+  // Intersection Observer for letter animations on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+        const text = entry.target.innerText;
+        entry.target.innerHTML = text.split('').map(char => `<span class="letter">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
+        entry.target.classList.add('visible');
+        const letters = entry.target.querySelectorAll('.letter');
+        letters.forEach((letter, i) => {
+          setTimeout(() => {
+            letter.style.opacity = '1';
+            letter.style.transform = 'translateY(0)';
+          }, i * 35);
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.letter-animate').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
