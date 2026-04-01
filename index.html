@@ -22,7 +22,7 @@
       overflow-x: hidden;
     }
 
-    /* Elegant Loading Screen */
+    /* Person Walking to House Loading Screen */
     .loading-screen {
       position: fixed;
       top: 0;
@@ -42,8 +42,124 @@
       visibility: hidden;
       pointer-events: none;
     }
-    .loading-logo {
+    
+    /* Journey Animation Container */
+    .journey-container {
+      position: relative;
+      width: 400px;
+      height: 180px;
+      margin-bottom: 40px;
+    }
+    
+    /* House Icon (Destination) */
+    .house-icon {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
       font-size: 4rem;
+      color: #e63946;
+      filter: drop-shadow(0 0 10px rgba(230,57,70,0.5));
+      z-index: 2;
+    }
+    
+    /* Person Icon (Walker) */
+    .person-icon {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 3.2rem;
+      color: #ff8c42;
+      filter: drop-shadow(0 0 8px rgba(255,140,66,0.5));
+      z-index: 3;
+      animation: walkToHouse 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    
+    @keyframes walkToHouse {
+      0% {
+        left: 0%;
+        opacity: 1;
+        transform: translateY(-50%) scaleX(1);
+      }
+      45% {
+        transform: translateY(-50%) scaleX(1);
+      }
+      48% {
+        transform: translateY(-50%) scaleX(-1);
+      }
+      50% {
+        transform: translateY(-50%) scaleX(-1);
+      }
+      52% {
+        transform: translateY(-50%) scaleX(1);
+      }
+      100% {
+        left: calc(100% - 70px);
+        transform: translateY(-50%) scaleX(1);
+        opacity: 1;
+      }
+    }
+    
+    /* Footstep Trail Effect */
+    .footstep-trail {
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      pointer-events: none;
+    }
+    
+    .footstep {
+      position: absolute;
+      bottom: 0;
+      font-size: 1rem;
+      color: rgba(255,140,66,0.4);
+      animation: fadeStep 0.6s ease-out forwards;
+    }
+    
+    @keyframes fadeStep {
+      0% {
+        opacity: 0.8;
+        transform: translateY(0) scale(0.8);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-15px) scale(1.2);
+      }
+    }
+    
+    /* Ground Line */
+    .ground-line {
+      position: absolute;
+      bottom: 25px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(230,57,70,0.3), rgba(230,57,70,0.8), rgba(230,57,70,0.3));
+      border-radius: 2px;
+    }
+    
+    /* Start Point Marker */
+    .start-marker {
+      position: absolute;
+      bottom: 10px;
+      left: 5px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .end-marker {
+      position: absolute;
+      bottom: 10px;
+      right: 5px;
+      font-size: 0.7rem;
+      color: rgba(230,57,70,0.6);
+    }
+    
+    .loading-logo {
+      font-size: 2.5rem;
       font-weight: 800;
       font-family: 'Cormorant Garamond', serif;
       letter-spacing: 4px;
@@ -51,29 +167,17 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 30px;
+      margin-top: 20px;
       animation: fadeInUp 0.8s ease;
     }
-    .loading-bar-container {
-      width: 280px;
-      height: 3px;
-      background: rgba(230, 57, 70, 0.2);
-      border-radius: 4px;
-      overflow: hidden;
+    
+    .loading-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
       margin-top: 20px;
     }
-    .loading-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #e63946, #ff8c42);
-      border-radius: 4px;
-      animation: loadingProgress 2s ease forwards;
-    }
-    @keyframes loadingProgress {
-      0% { width: 0%; }
-      50% { width: 65%; }
-      100% { width: 100%; }
-    }
+    
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -84,11 +188,16 @@
         transform: translateY(0);
       }
     }
-    .loading-sub {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.85rem;
-      letter-spacing: 2px;
-      margin-top: 20px;
+    
+    /* Progress Percentage */
+    .progress-percent {
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #e63946, #ff8c42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-top: 15px;
     }
 
     .container {
@@ -608,18 +717,31 @@
       .section-title { font-size: 2rem; }
       .rooms-grid { grid-template-columns: 1fr; }
       .menu-container { padding: 35px 25px; }
+      .journey-container { width: 280px; }
+      .person-icon { font-size: 2.5rem; }
+      .house-icon { font-size: 3rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- Elegant Loading Screen -->
+<!-- Person Walking to House Loading Screen -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">RETEMA</div>
-  <div class="loading-bar-container">
-    <div class="loading-bar"></div>
+  <div class="journey-container">
+    <div class="ground-line"></div>
+    <div class="start-marker"><i class="fas fa-map-marker-alt"></i> Start</div>
+    <div class="end-marker"><i class="fas fa-home"></i> Retema</div>
+    <div class="person-icon">
+      <i class="fas fa-walking"></i>
+    </div>
+    <div class="house-icon">
+      <i class="fas fa-home"></i>
+    </div>
+    <div class="footstep-trail" id="footstepTrail"></div>
   </div>
-  <div class="loading-sub">premium student living</div>
+  <div class="loading-logo">RETEMA</div>
+  <div class="progress-percent" id="progressPercent">0%</div>
+  <div class="loading-sub">finding your new home</div>
 </div>
 
 <header>
@@ -785,12 +907,41 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 <script>
-  // FIXED: Hide loading screen after page fully loads
+  // Person walking to house loading animation with footsteps and percentage
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 2;
+    const percentSpan = document.getElementById('progressPercent');
+    if (percentSpan) percentSpan.innerText = Math.min(progress, 100) + '%';
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+    }
+  }, 44);
+  
+  // Add footsteps during animation
+  function addFootstep() {
+    const trail = document.getElementById('footstepTrail');
+    if (!trail) return;
+    const footstep = document.createElement('div');
+    footstep.className = 'footstep';
+    footstep.innerHTML = '<i class="fas fa-shoe-prints"></i>';
+    const randomLeft = Math.random() * 100;
+    footstep.style.left = randomLeft + '%';
+    trail.appendChild(footstep);
+    setTimeout(() => {
+      if (footstep) footstep.remove();
+    }, 600);
+  }
+  
+  let footstepInterval = setInterval(addFootstep, 90);
+  
+  // Hide loading screen after animation completes
   window.addEventListener('load', function() {
     setTimeout(function() {
       const loadingScreen = document.getElementById('loadingScreen');
       if (loadingScreen) {
         loadingScreen.classList.add('hidden');
+        clearInterval(footstepInterval);
       }
     }, 2200);
   });
@@ -946,7 +1097,7 @@
     });
   }
   
-  // Map with exact coordinates from first website
+  // Map with exact coordinates
   function initMap() {
     const mapDiv = document.getElementById('map');
     if (mapDiv && typeof L !== 'undefined') {
