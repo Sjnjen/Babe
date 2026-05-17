@@ -2,1142 +2,891 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Retema | Premier Student Living • UNIVEN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Retema | Cinematic Student Living • UNIVEN Thohoyandou</title>
+  
+  <!-- SEO + OpenGraph + Schema.org -->
+  <meta name="description" content="Premium student accommodation at UNIVEN main gate. Luxury rooms, NSFAS friendly, 24/7 security, free WiFi, and cinematic living experience.">
+  <meta name="keywords" content="student accommodation Thohoyandou, UNIVEN housing, NSFAS approved, luxury student living">
+  <meta property="og:title" content="Retema | Premier Student Living">
+  <meta property="og:description" content="Luxury student accommodation near University of Venda. Apply now for premium rooms.">
+  <meta property="og:image" content="assets/preview.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="geo.region" content="ZA-LP">
+  <meta name="geo.placename" content="Thohoyandou">
+  <meta name="geo.position" content="-22.9788;30.4334">
+  <link rel="canonical" href="https://retema.co.za">
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+  
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-dark: #0D0D0D;
+      --gold: #C6A77D;
+      --gold-dark: #7A5C3E;
+      --text-light: #F5F1EB;
+      --glass-bg: rgba(13, 13, 13, 0.85);
     }
-
     body {
       font-family: 'Inter', sans-serif;
-      background: #0a0a0a;
-      color: #ffffff;
+      background: var(--bg-dark);
+      color: var(--text-light);
       overflow-x: hidden;
     }
-
-    /* Person Walking to House Loading Screen */
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    /* Ambient grain + vignette */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.4) 100%),
+                  repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
+      pointer-events: none;
+      z-index: 9997;
+      mix-blend-mode: soft-light;
+    }
+    /* Scroll progress */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--gold);
+      z-index: 10002;
+      transition: width 0.1s;
+    }
+    /* Cursor glow (desktop) */
+    @media (hover: hover) {
+      .cursor-glow {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(198,167,125,0.12) 0%, rgba(198,167,125,0) 70%);
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: transform 0.05s;
+        border-radius: 50%;
+      }
+    }
+    /* Cinematic loader */
     .loading-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: #000000;
+      background: var(--bg-dark);
       z-index: 10000;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1);
+      transition: opacity 1.2s cubic-bezier(0.19, 1, 0.22, 1);
     }
-    .loading-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    
-    /* Journey Animation Container */
-    .journey-container {
-      position: relative;
-      width: 400px;
-      height: 180px;
-      margin-bottom: 40px;
-    }
-    
-    /* House Icon (Destination) */
-    .house-icon {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 4rem;
-      color: #e63946;
-      filter: drop-shadow(0 0 10px rgba(230,57,70,0.5));
-      z-index: 2;
-    }
-    
-    /* Person Icon (Walker) */
-    .person-icon {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 3.2rem;
-      color: #ff8c42;
-      filter: drop-shadow(0 0 8px rgba(255,140,66,0.5));
-      z-index: 3;
-      animation: walkToHouse 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    }
-    
-    @keyframes walkToHouse {
-      0% {
-        left: 0%;
-        opacity: 1;
-        transform: translateY(-50%) scaleX(1);
-      }
-      45% {
-        transform: translateY(-50%) scaleX(1);
-      }
-      48% {
-        transform: translateY(-50%) scaleX(-1);
-      }
-      50% {
-        transform: translateY(-50%) scaleX(-1);
-      }
-      52% {
-        transform: translateY(-50%) scaleX(1);
-      }
-      100% {
-        left: calc(100% - 70px);
-        transform: translateY(-50%) scaleX(1);
-        opacity: 1;
-      }
-    }
-    
-    /* Footstep Trail Effect */
-    .footstep-trail {
-      position: absolute;
-      bottom: 30px;
-      left: 0;
-      width: 100%;
-      height: 20px;
-      pointer-events: none;
-    }
-    
-    .footstep {
-      position: absolute;
-      bottom: 0;
-      font-size: 1rem;
-      color: rgba(255,140,66,0.4);
-      animation: fadeStep 0.6s ease-out forwards;
-    }
-    
-    @keyframes fadeStep {
-      0% {
-        opacity: 0.8;
-        transform: translateY(0) scale(0.8);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-15px) scale(1.2);
-      }
-    }
-    
-    /* Ground Line */
-    .ground-line {
-      position: absolute;
-      bottom: 25px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(230,57,70,0.3), rgba(230,57,70,0.8), rgba(230,57,70,0.3));
-      border-radius: 2px;
-    }
-    
-    /* Start Point Marker */
-    .start-marker {
-      position: absolute;
-      bottom: 10px;
-      left: 5px;
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.4);
-    }
-    
-    .end-marker {
-      position: absolute;
-      bottom: 10px;
-      right: 5px;
-      font-size: 0.7rem;
-      color: rgba(230,57,70,0.6);
-    }
-    
+    .loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     .loading-logo {
-      font-size: 2.5rem;
-      font-weight: 800;
       font-family: 'Cormorant Garamond', serif;
-      letter-spacing: 4px;
-      background: linear-gradient(135deg, #e63946 0%, #ff8c42 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-top: 20px;
-      animation: fadeInUp 0.8s ease;
+      font-size: 4rem;
+      letter-spacing: 8px;
+      color: var(--gold);
+      opacity: 0;
+      transform: scale(0.9);
+      animation: cinematicLogoFade 1.2s ease forwards;
     }
-    
-    .loading-sub {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.85rem;
-      letter-spacing: 2px;
-      margin-top: 20px;
+    @keyframes cinematicLogoFade {
+      0% { opacity: 0; transform: scale(0.9); filter: blur(8px); }
+      40% { opacity: 1; transform: scale(1); filter: blur(0); }
+      100% { opacity: 1; transform: scale(1); filter: blur(0); }
     }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .loading-bar {
+      width: 280px;
+      height: 2px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 30px;
+      opacity: 0;
+      animation: fadeInUp 0.6s 0.5s forwards;
     }
-    
-    /* Progress Percentage */
-    .progress-percent {
-      font-size: 1rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #e63946, #ff8c42);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-top: 15px;
+    .loading-progress {
+      width: 0%;
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.2s linear;
     }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 40px;
-    }
-
-    /* Premium Header */
-    header {
-      background: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(12px);
-      padding: 20px 0;
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    /* Navbar */
+    .navbar {
       position: fixed;
       top: 0;
+      left: 0;
       width: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
       z-index: 1000;
-      border-bottom: 1px solid rgba(230, 57, 70, 0.3);
-      transition: all 0.3s ease;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(198,167,125,0.2);
+      transition: background 0.4s ease, padding 0.4s ease;
     }
-    .nav-flex {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+    .navbar.scrolled { padding: 10px 0; background: rgba(13,13,13,0.96); }
+    .container { max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
     .logo {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    .logo:hover {
-      transform: scale(1.02);
-    }
-    .logo-main {
-      font-size: 2.8rem;
-      font-weight: 800;
       font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 700;
       letter-spacing: -1px;
-      background: linear-gradient(135deg, #e63946, #ff8c42);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .logo-sub {
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 1px;
-    }
-    
-    .menu-btn {
-      background: linear-gradient(135deg, #e63946, #ff6b4a);
-      color: white;
-      border: none;
-      padding: 12px 32px;
-      border-radius: 50px;
-      font-weight: 600;
+      color: var(--gold);
       cursor: pointer;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.4s;
-      box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
     }
-    .menu-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(230, 57, 70, 0.5);
+    .logo span { color: var(--text-light); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.3s;
     }
-    
-    /* Premium Overlay Menu */
-    .menu-overlay {
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .apply-nav {
+      background: var(--gold);
+      color: var(--bg-dark) !important;
+      padding: 10px 28px;
+      border-radius: 40px;
+    }
+    .apply-nav:hover { background: var(--gold-dark); color: white !important; }
+    .menu-icon { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+    @media (max-width: 900px) { .nav-links { display: none; } .menu-icon { display: block; } .container { padding: 0 24px; } }
+    /* Mobile menu */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 75%;
+      max-width: 300px;
+      height: 100%;
+      background: #0D0D0D;
+      z-index: 2000;
+      padding: 80px 30px;
+      transition: 0.4s;
+      border-left: 1px solid rgba(198,167,125,0.3);
+    }
+    .mobile-menu.open { right: 0; }
+    .mobile-menu a {
+      display: block;
+      padding: 18px 0;
+      color: white;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-weight: 500;
+    }
+    .close-menu { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; }
+    /* Mobile bottom nav */
+    .mobile-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(13,13,13,0.95);
+      backdrop-filter: blur(12px);
+      display: none;
+      justify-content: space-around;
+      padding: 12px 20px;
+      z-index: 1000;
+      border-top: 1px solid rgba(198,167,125,0.3);
+    }
+    .mobile-bottom-nav a { color: var(--text-light); font-size: 1.2rem; text-align: center; flex: 1; text-decoration: none; }
+    .mobile-bottom-nav a i { display: block; margin-bottom: 4px; }
+    @media (max-width: 900px) { .mobile-bottom-nav { display: flex; } body { padding-bottom: 70px; } }
+    /* Page transitions */
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; }
+    .transition-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.98);
-      backdrop-filter: blur(20px);
-      z-index: 2000;
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-    .menu-overlay.active {
-      display: flex;
-    }
-    .menu-container {
-      background: linear-gradient(145deg, #141414, #0a0a0a);
-      border-radius: 48px;
-      padding: 55px 60px;
-      max-width: 600px;
-      width: 90%;
-      text-align: center;
-      border: 1px solid rgba(230, 57, 70, 0.4);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-      animation: scaleIn 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-    .menu-container h2 {
-      background: linear-gradient(135deg, #e63946, #ff8c42);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 35px;
-      font-size: 2rem;
-      font-weight: 600;
-    }
-    .menu-options {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .menu-option {
-      background: rgba(30,30,30,0.8);
-      padding: 16px 28px;
-      border-radius: 60px;
-      text-decoration: none;
-      color: white;
-      font-weight: 500;
-      font-size: 1.1rem;
-      transition: all 0.3s;
-      cursor: pointer;
-      border: 1px solid rgba(230, 57, 70, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      justify-content: center;
-    }
-    .menu-option:hover {
-      background: linear-gradient(135deg, #e63946, #ff6b4a);
-      transform: translateX(8px);
-      border-color: transparent;
-    }
-    .close-menu {
-      margin-top: 35px;
-      background: transparent;
-      border: 1px solid rgba(230, 57, 70, 0.5);
-      color: white;
-      padding: 12px 32px;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    .close-menu:hover {
-      background: rgba(230, 57, 70, 0.2);
-      border-color: #e63946;
-    }
-    
-    /* Page Transitions */
-    .page-container {
-      margin-top: 100px;
-      min-height: calc(100vh - 100px);
-      padding-bottom: 60px;
-    }
-    .page {
-      display: none;
-      animation: pageReveal 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    .page.active {
-      display: block;
-    }
-    @keyframes pageReveal {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    /* Letter-by-letter animation class */
-    .letter-animate {
+      background: var(--bg-dark);
+      z-index: 10001;
+      pointer-events: none;
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     }
-    .letter-animate.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .letter {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(25px);
-      transition: all 0.08s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-    }
-    
-    /* Premium Hero */
+    /* Hero */
     .hero {
-      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-      padding: 80px 60px;
-      border-radius: 48px;
-      margin-bottom: 50px;
+      height: 100vh;
       position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(230,57,70,0.2);
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(230,57,70,0.05) 0%, transparent 70%);
-      animation: rotateGlow 20s linear infinite;
-    }
-    @keyframes rotateGlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .hero-grid {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      gap: 60px;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .hero-media video, .hero-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(13,13,13,0.6), rgba(13,13,13,0.3));
+      z-index: 1;
+    }
+    .hero-content {
       position: relative;
       z-index: 2;
-    }
-    .hero-text {
-      flex: 1;
-    }
-    .hero-text h2 {
-      font-size: 3.8rem;
-      font-weight: 800;
-      font-family: 'Cormorant Garamond', serif;
-      line-height: 1.2;
-      margin-bottom: 20px;
+      max-width: 900px;
+      padding: 0 20px;
+      margin: 0 auto;
     }
     .hero-badge {
-      background: linear-gradient(135deg, #e63946, #ff8c42);
-      display: inline-block;
-      padding: 8px 24px;
+      background: rgba(198,167,125,0.2);
+      backdrop-filter: blur(4px);
+      padding: 5px 18px;
       border-radius: 40px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 25px;
-      letter-spacing: 1px;
-    }
-    .section-title {
-      font-size: 2.8rem;
-      font-weight: 700;
-      font-family: 'Cormorant Garamond', serif;
-      margin-bottom: 45px;
-      position: relative;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
       display: inline-block;
+      margin-bottom: 20px;
     }
-    .section-title:after {
-      content: '';
-      position: absolute;
-      bottom: -12px;
-      left: 0;
-      width: 70px;
-      height: 3px;
-      background: linear-gradient(90deg, #e63946, #ff8c42);
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4.8rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
     }
-    
-    /* Rooms Grid */
-    .rooms-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 45px;
-      margin-top: 30px;
+    .hero h1 span { color: var(--gold); }
+    .hero p { font-size: 1.1rem; margin-bottom: 32px; opacity: 0.9; }
+    /* Cinematic letter animation with blur */
+    .letter-span {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(25px);
+      transition: all 0.12s cubic-bezier(0.2,0.9,0.4,1.2);
     }
-    .room-card {
-      background: linear-gradient(145deg, #141414, #0e0e0e);
-      border-radius: 32px;
-      overflow: hidden;
-      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      border: 1px solid rgba(230,57,70,0.15);
+    .letter-span.revealed {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
     }
-    .room-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 30px 50px rgba(0,0,0,0.5);
-      border-color: rgba(230,57,70,0.4);
-    }
-    .room-img-gallery {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2px;
-    }
-    .room-img-gallery a {
-      display: block;
-      overflow: hidden;
-    }
-    .room-img-gallery img {
-      width: 100%;
-      height: 170px;
-      object-fit: cover;
-      transition: transform 0.6s ease;
-    }
-    .room-img-gallery img:hover {
-      transform: scale(1.08);
-    }
-    .room-info {
-      padding: 28px;
-    }
-    .price {
-      font-size: 2.2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #e63946, #ff8c42);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 8px;
-    }
-    .btn-whatsapp-room {
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      color: white;
-      border: none;
-      padding: 14px 20px;
+    /* Buttons */
+    .btn-primary, .btn-outline {
+      padding: 14px 36px;
       border-radius: 50px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      justify-content: center;
       text-decoration: none;
-      width: 100%;
-      margin-top: 20px;
-      transition: all 0.3s;
+      font-weight: 600;
+      transition: 0.3s;
+      display: inline-block;
+      cursor: pointer;
+      border: none;
     }
-    .btn-whatsapp-room:hover {
-      transform: scale(1.02);
-      box-shadow: 0 5px 20px rgba(37,211,102,0.4);
+    .btn-primary { background: var(--gold); color: var(--bg-dark); }
+    .btn-primary:hover { transform: translateY(-3px); background: var(--gold-dark); color: white; }
+    .btn-outline { border: 1px solid rgba(255,255,255,0.4); color: white; background: transparent; }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+    /* Sections */
+    section { padding: 100px 0; }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      letter-spacing: -1px;
     }
-    
-    .amenities-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 30px;
+    .section-sub {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      font-size: 0.75rem;
+      margin-bottom: 10px;
     }
-    .amenity-item {
+    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+    /* R-shape */
+    .r-shape-section {
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: rgba(30,30,30,0.7);
-      padding: 10px 24px;
-      border-radius: 60px;
-      font-size: 0.9rem;
-      transition: all 0.3s;
-      border: 1px solid rgba(230,57,70,0.2);
+      gap: 60px;
+      background: rgba(245,241,235,0.03);
+      border-radius: 48px;
+      padding: 60px;
+      margin: 60px 0;
+      border: 1px solid rgba(198,167,125,0.2);
     }
-    .amenity-item:hover {
-      background: rgba(230,57,70,0.2);
-      transform: translateY(-3px);
+    .r-image-area { flex: 1; cursor: pointer; position: relative; }
+    .r-image-area img { width: 100%; height: 400px; object-fit: cover; border-radius: 32px; }
+    .r-text-area { flex: 1; }
+    .r-letter { font-size: 8rem; font-family: 'Cormorant Garamond', serif; color: var(--gold); }
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 30px; margin: 50px 0; }
+    .stat-card {
+      background: rgba(255,255,255,0.03);
+      border-radius: 24px;
+      padding: 35px 20px;
+      text-align: center;
+      border: 1px solid rgba(198,167,125,0.15);
+      transition: 0.3s;
     }
-    .amenity-item i {
-      color: #e63946;
-    }
-    
-    /* Gallery */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 30px;
-      margin-top: 30px;
-    }
-    .gallery-item {
+    .stat-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+    .stat-number { font-size: 2.8rem; font-weight: 800; color: var(--gold); }
+    /* Room cards */
+    .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px,1fr)); gap: 40px; }
+    .room-card {
+      background: rgba(255,255,255,0.03);
       border-radius: 28px;
       overflow: hidden;
-      height: 280px;
+      border: 1px solid rgba(198,167,125,0.15);
+      transition: all 0.4s;
       position: relative;
-      cursor: pointer;
-      transition: all 0.5s;
     }
-    .gallery-item img {
+    .room-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .room-card:hover::before { opacity: 1; }
+    .room-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+    .room-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--gold);
+      color: var(--bg-dark);
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+    .room-img { height: 260px; overflow: hidden; }
+    .room-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .room-card:hover .room-img img { transform: scale(1.05); }
+    .room-info { padding: 28px; position: relative; z-index: 2; }
+    .room-price { font-size: 1.8rem; font-weight: 700; color: var(--gold); }
+    /* Swiper gallery */
+    .gallery-swiper { width: 100%; padding: 20px 0; }
+    .gallery-swiper .swiper-slide { width: 350px; height: 450px; border-radius: 28px; overflow: hidden; cursor: pointer; }
+    .gallery-swiper .swiper-slide img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+    /* Fullscreen modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      transition: transform 0.7s ease;
+      background: rgba(13,13,13,0.95);
+      backdrop-filter: blur(20px);
+      z-index: 10050;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-    .gallery-item:hover {
-      transform: scale(1.02);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
-    .gallery-item:hover img {
-      transform: scale(1.05);
-    }
-    .gallery-caption {
+    .modal.active { display: flex; }
+    .modal img { max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 16px; }
+    .modal-close {
       position: absolute;
-      bottom: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-      width: 100%;
-      padding: 20px 15px 15px;
-      text-align: center;
-      font-weight: 600;
+      top: 30px;
+      right: 40px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--gold);
     }
-    
-    /* Reviews */
-    .review-board {
-      background: linear-gradient(145deg, #141414, #0e0e0e);
-      border-radius: 40px;
-      padding: 45px;
-      border: 1px solid rgba(230,57,70,0.15);
-    }
-    .rating-stars {
+    /* Amenities */
+    .amenities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 20px; }
+    .amenity-card {
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      padding: 20px 24px;
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 35px;
     }
-    .stars {
-      font-size: 2rem;
-      letter-spacing: 5px;
-      color: #ffc107;
-    }
-    .review-card {
-      background: rgba(30,30,30,0.6);
-      padding: 25px;
-      border-radius: 28px;
-      margin-bottom: 20px;
-      transition: all 0.3s;
-      border-left: 3px solid #e63946;
-    }
-    .review-card:hover {
-      transform: translateX(8px);
-      background: rgba(40,40,40,0.8);
-    }
-    .review-form input, .review-form select, .review-form textarea {
-      background: #2a2a2a;
-      border: none;
-      padding: 14px;
-      border-radius: 28px;
-      color: white;
-      margin: 10px 0;
-      width: 100%;
-    }
-    
+    .amenity-card i { font-size: 1.6rem; color: var(--gold); }
     /* Map */
-    #map {
-      height: 480px;
+    .map-wrapper { border-radius: 32px; overflow: hidden; margin: 30px 0; border: 1px solid rgba(198,167,125,0.3); }
+    #map { height: 450px; width: 100%; background: #1a1a1a; }
+    /* Contact */
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 40px; }
+    .contact-card {
+      background: rgba(255,255,255,0.03);
+      border-radius: 28px;
+      padding: 40px;
+      text-align: center;
+    }
+    /* Form */
+    input, textarea, select {
       width: 100%;
-      border-radius: 32px;
-      border: 2px solid rgba(230,57,70,0.3);
-      margin-top: 30px;
-    }
-    
-    /* Footer */
-    footer {
-      background: #050505;
-      padding: 60px 0 30px;
-      margin-top: 60px;
-      border-top: 1px solid rgba(230,57,70,0.2);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 50px;
-      margin-bottom: 50px;
-    }
-    .footer-col h4 {
-      color: #e63946;
-      margin-bottom: 25px;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-    .footer-col ul {
-      list-style: none;
-    }
-    .footer-col a {
-      color: #bbb;
-      text-decoration: none;
+      padding: 16px 20px;
+      margin: 12px 0;
+      border-radius: 18px;
+      border: 1px solid rgba(198,167,125,0.15);
+      background: rgba(255,255,255,0.03);
+      color: white;
+      outline: none;
+      font-size: 1rem;
       transition: 0.2s;
-      line-height: 2;
     }
-    .footer-col a:hover {
-      color: #e63946;
-      padding-left: 5px;
+    input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+    /* Footer */
+    footer { background: #0A0A0A; padding: 60px 0 30px; margin-top: 60px; border-top: 1px solid rgba(198,167,125,0.2); }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 50px; }
+    .footer-col h4 { color: var(--gold); margin-bottom: 20px; }
+    .footer-col a { color: #B0A89A; text-decoration: none; display: block; margin: 10px 0; transition: 0.2s; }
+    .footer-col a:hover { color: var(--gold); padding-left: 5px; }
+    /* Accessibility */
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
     }
-    .social-icons a {
-      font-size: 1.8rem;
-      margin-right: 20px;
-      color: white;
-      transition: all 0.3s;
-      display: inline-block;
-    }
-    .social-icons a:hover {
-      color: #e63946;
-      transform: translateY(-5px);
-    }
-    .footer-whatsapp a {
-      background: #25D366;
-      padding: 12px 25px;
-      border-radius: 50px;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      color: white;
-      text-decoration: none;
-      margin-top: 20px;
-    }
-    
     @media (max-width: 768px) {
-      .container { padding: 0 20px; }
-      .hero-text h2 { font-size: 2.2rem; }
-      .hero { padding: 40px 25px; }
+      .hero h1 { font-size: 2.5rem; }
       .section-title { font-size: 2rem; }
-      .rooms-grid { grid-template-columns: 1fr; }
-      .menu-container { padding: 35px 25px; }
-      .journey-container { width: 280px; }
-      .person-icon { font-size: 2.5rem; }
-      .house-icon { font-size: 3rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .r-shape-section { flex-direction: column; padding: 30px; }
     }
   </style>
 </head>
 <body>
 
-<!-- Person Walking to House Loading Screen -->
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cursor-glow"></div>
+<div class="transition-overlay" id="transitionOverlay"></div>
+
+<!-- Fullscreen Modal -->
+<div class="modal" id="imageModal">
+  <div class="modal-close"><i class="fas fa-times"></i></div>
+  <img id="modalImage" alt="Fullscreen view">
+</div>
+
+<!-- Loading Screen -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="journey-container">
-    <div class="ground-line"></div>
-    <div class="start-marker"><i class="fas fa-map-marker-alt"></i> Start</div>
-    <div class="end-marker"><i class="fas fa-home"></i> Retema</div>
-    <div class="person-icon">
-      <i class="fas fa-walking"></i>
-    </div>
-    <div class="house-icon">
-      <i class="fas fa-home"></i>
-    </div>
-    <div class="footstep-trail" id="footstepTrail"></div>
-  </div>
   <div class="loading-logo">RETEMA</div>
-  <div class="progress-percent" id="progressPercent">0%</div>
-  <div class="loading-sub">finding your new home</div>
+  <div class="loading-bar"><div class="loading-progress" id="loadProgress"></div></div>
 </div>
 
-<header>
+<!-- Floating WhatsApp -->
+<a href="https://wa.me/27662672037" class="float-wa" style="position:fixed; bottom:30px; right:30px; background:#25D366; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.8rem; z-index:99; text-decoration:none; box-shadow:0 8px 20px rgba(37,211,102,0.3);" aria-label="WhatsApp Chat"><i class="fab fa-whatsapp"></i></a>
+
+<!-- Navbar -->
+<div class="navbar" id="navbar">
   <div class="container nav-flex">
-    <div class="logo" id="logoHome">
-      <span class="logo-main">RETEMA</span>
-      <span class="logo-sub">accommodation</span>
+    <div class="logo" id="logoHome" tabindex="0" role="button" aria-label="Home">RETE<span>MA</span></div>
+    <div class="nav-links">
+      <a href="#" data-page="home" class="nav-link">HOME</a>
+      <a href="#" data-page="about" class="nav-link">ABOUT</a>
+      <a href="#" data-page="residence" class="nav-link">RESIDENCE</a>
+      <a href="#" data-page="rooms" class="nav-link">ROOMS</a>
+      <a href="#" data-page="gallery" class="nav-link">GALLERY</a>
+      <a href="#" data-page="contact" class="nav-link">CONTACT</a>
+      <a href="#" data-page="apply" class="apply-nav">APPLY</a>
     </div>
-    <button class="menu-btn" id="menuButton">
-      <i class="fas fa-gem"></i> EXPLORE
-    </button>
-  </div>
-</header>
-
-<!-- Overlay Menu -->
-<div class="menu-overlay" id="menuOverlay">
-  <div class="menu-container">
-    <h2><i class="fas fa-crown"></i> Navigate</h2>
-    <div class="menu-options">
-      <div class="menu-option" data-page="home"><i class="fas fa-home"></i> Home</div>
-      <div class="menu-option" data-page="about"><i class="fas fa-info-circle"></i> About Us</div>
-      <div class="menu-option" data-page="rooms"><i class="fas fa-bed"></i> Rooms & Pricing</div>
-      <div class="menu-option" data-page="gallery"><i class="fas fa-images"></i> Gallery</div>
-      <div class="menu-option" data-page="reviews"><i class="fas fa-star"></i> Reviews</div>
-      <div class="menu-option" data-page="map"><i class="fas fa-map-marker-alt"></i> Location Map</div>
-      <div class="menu-option" data-page="contact"><i class="fas fa-phone-alt"></i> Contact</div>
-    </div>
-    <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i> Close</button>
+    <div class="menu-icon" aria-label="Menu"><i class="fas fa-bars"></i></div>
   </div>
 </div>
 
-<!-- Main Content -->
-<div class="page-container">
-  <!-- Home Page -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="close-menu" aria-label="Close">✕</div>
+  <a href="#" data-page="home">HOME</a>
+  <a href="#" data-page="about">ABOUT</a>
+  <a href="#" data-page="residence">RESIDENCE</a>
+  <a href="#" data-page="rooms">ROOMS</a>
+  <a href="#" data-page="gallery">GALLERY</a>
+  <a href="#" data-page="contact">CONTACT</a>
+  <a href="#" data-page="apply">APPLY</a>
+</div>
+
+<div class="mobile-bottom-nav">
+  <a href="#" data-page="home"><i class="fas fa-home"></i><span>Home</span></a>
+  <a href="#" data-page="rooms"><i class="fas fa-bed"></i><span>Rooms</span></a>
+  <a href="#" data-page="apply"><i class="fas fa-file-alt"></i><span>Apply</span></a>
+  <a href="#" data-page="contact"><i class="fas fa-phone"></i><span>Call</span></a>
+</div>
+
+<main>
+  <!-- HOME -->
   <div class="page active" id="home-page">
-    <div class="container">
-      <div class="hero">
-        <div class="hero-grid">
-          <div class="hero-text">
-            <div class="hero-badge">✦ MAUNGANI | UNIVEN MAIN GATE ✦</div>
-            <h2 class="letter-animate" id="heroTitle">Live, Study, Thrive<br> at <span style="color:#e63946">Retema</span></h2>
-            <p class="letter-animate" id="heroDesc">Premium student accommodation for funded & unfunded students. Steps from University of Venda. Safe, modern & built for success.</p>
-            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 25px;">
-              <button class="menu-btn" style="background: linear-gradient(135deg, #e63946, #ff6b4a);" id="exploreBtn">Explore Rooms <i class="fas fa-arrow-right"></i></button>
-              <button class="menu-btn" style="background: transparent; border: 2px solid #e63946;" id="contactBtn">Contact Us</button>
-            </div>
-            <div style="margin-top: 35px; display: flex; gap: 25px; flex-wrap: wrap;">
-              <span><i class="fas fa-check-circle" style="color:#e63946"></i> NSFAS & Bursary friendly</span>
-              <span><i class="fas fa-wifi"></i> Free unlimited WiFi</span>
-              <span><i class="fas fa-shield-alt"></i> 24/7 Security</span>
-            </div>
-          </div>
-          <div class="hero-icon" style="flex:1; text-align:center;">
-            <i class="fas fa-building" style="font-size: 10rem; color: rgba(230,57,70,0.6);"></i>
-          </div>
-        </div>
+    <div class="hero" id="heroSection">
+      <div class="hero-media" id="heroMedia">
+        <!-- Replace with your own compressed MP4 (local path) -->
+        <video autoplay muted loop playsinline id="heroVideo" preload="auto" fetchpriority="high">
+          <source src="https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <div class="hero-badge" id="heroBadge">✦ MAUNGANI | UNIVEN MAIN GATE ✦</div>
+        <h1 id="heroTitle">Superior Student Living<br>in <span>Thohoyandou</span></h1>
+        <p id="heroDesc">Premium accommodation for funded & unfunded students. Steps from University of Venda. Safe, modern & built for success.</p>
+        <div><a href="#" data-page="rooms" class="btn-primary">Explore Rooms</a><a href="#" data-page="apply" class="btn-outline" style="margin-left:15px;">Apply Now</a></div>
       </div>
     </div>
   </div>
 
-  <!-- About Page -->
-  <div class="page" id="about-page">
-    <div class="container">
-      <h1 class="section-title letter-animate">About Retema</h1>
-      <div style="background: linear-gradient(135deg, #141414, #0a0a0a); padding: 50px; border-radius: 40px; margin-bottom: 40px;">
-        <p style="font-size: 1.2rem; line-height: 1.8;">We offer premium, secure student living at Maungani, just next to University of Venda Main Gate. Every unit includes <strong>in-suite stoves, fridges, laundry sites, tuckshop, parking, 24/7 CCTV, tight security, unlimited WiFi, and continuous hot water.</strong></p>
-      </div>
-      <h3 style="color: #e63946; margin: 40px 0 25px;">✨ All Amenities</h3>
-      <div class="amenities-list" id="amenitiesList"></div>
-    </div>
-  </div>
+  <!-- ABOUT -->
+  <div class="page" id="about-page"><div class="container">
+    <div class="section-sub">ABOUT RETEMA</div><h1 class="section-title reveal">Premium Student Accommodation</h1>
+    <div class="r-shape-section reveal"><div class="r-image-area" id="rImageArea"><img id="rShapeImage" src="https://placehold.co/800x600/1a1a1a/C6A77D?text=Click+to+upload+R+image" loading="lazy" alt="R shape image placeholder" decoding="async"><div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); padding:5px 10px; border-radius:20px; font-size:0.7rem;"><i class="fas fa-cloud-upload-alt"></i> Click</div></div><div class="r-text-area"><div class="r-letter">R</div><h2 style="font-size:2rem;">Retema Excellence</h2><p style="color:#B0A89A;">Our signature commitment to quality, security, and student success. Located at Maungani, right next to UNIVEN Main Gate.</p></div></div>
+    <div class="stats-grid"><div class="stat-card reveal"><div class="stat-number" data-count="1040">0</div><div>Total Beds</div></div><div class="stat-card reveal"><div class="stat-number" data-count="24">0/7</div><div>Security & CCTV</div></div><div class="stat-card reveal"><div class="stat-number" data-count="100">0%</div><div>WiFi Coverage</div></div><div class="stat-card reveal"><div class="stat-number" data-count="1.3">0 km</div><div>From UNIVEN</div></div></div>
+    <p class="reveal" style="line-height:1.8;">Retema offers premium NSFAS-friendly accommodation at Maungani, right next to UNIVEN Main Gate. Each unit features in-suite stoves, fridges, laundry, tuckshop, secure parking, 24/7 CCTV, unlimited WiFi, backup water & electricity.</p>
+  </div></div>
 
-  <!-- Rooms Page -->
-  <div class="page" id="rooms-page">
-    <div class="container">
-      <h1 class="section-title letter-animate">Rooms to choose from</h1>
-      <div class="rooms-grid" id="roomsContainer"></div>
-    </div>
-  </div>
+  <!-- RESIDENCE -->
+  <div class="page" id="residence-page"><div class="container"><div class="section-sub">THE RESIDENCE</div><h1 class="section-title reveal">Facilities & Amenities</h1><div class="amenities-grid" id="amenitiesGrid"></div><div class="pdf-section" style="background:rgba(198,167,125,0.1); border-radius:28px; padding:40px; text-align:center; margin:40px 0;"><i class="fas fa-download" style="font-size:2rem; color:var(--gold);"></i><h3>Download Brochure</h3><p>Complete info about rooms, pricing, and amenities</p><button id="pdfDownloadBtn" class="btn-primary" style="background:var(--gold); color:var(--bg-dark);">📄 Generate PDF Brochure</button></div></div></div>
 
-  <!-- Gallery Page -->
-  <div class="page" id="gallery-page">
-    <div class="container">
-      <h1 class="section-title letter-animate">Facilities & Common Areas</h1>
-      <div class="gallery-grid" id="facilityGallery"></div>
-    </div>
-  </div>
+  <!-- ROOMS -->
+  <div class="page" id="rooms-page"><div class="container"><div class="section-sub">ROOMS & PRICING</div><h1 class="section-title reveal">Choose Your Space</h1><div class="rooms-grid" id="roomsGrid"></div></div></div>
 
-  <!-- Reviews Page -->
-  <div class="page" id="reviews-page">
-    <div class="container">
-      <h1 class="section-title letter-animate">Ratings & Reviews</h1>
-      <div class="review-board">
-        <div class="rating-stars">
-          <div class="stars" id="avgStars">★★★★★</div>
-          <span id="avgRatingDisplay" style="font-size: 1.5rem; font-weight: 700;">5.0</span>
-          <span style="color: #888;">(<span id="reviewCount">0</span> reviews)</span>
-        </div>
-        <div id="reviewsList"></div>
-        <div class="review-form" style="margin-top: 35px;">
-          <h3 style="margin-bottom: 20px;">Write a review</h3>
-          <input type="text" id="reviewerName" placeholder="Your name">
-          <select id="reviewRating">
-            <option value="5">★★★★★ (5) - Excellent</option>
-            <option value="4">★★★★☆ (4) - Very Good</option>
-            <option value="3">★★★☆☆ (3) - Good</option>
-            <option value="2">★★☆☆☆ (2) - Fair</option>
-            <option value="1">★☆☆☆☆ (1) - Poor</option>
-          </select>
-          <textarea id="reviewComment" rows="4" placeholder="Tell us about your stay..."></textarea>
-          <button class="menu-btn" id="submitReview" style="background:#e63946; width:auto; padding:12px 35px;">Submit Review</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- GALLERY -->
+  <div class="page" id="gallery-page"><div class="container"><div class="section-sub">VISUAL TOUR</div><h1 class="section-title reveal">Gallery</h1><div class="swiper gallery-swiper" id="gallerySwiper"><div class="swiper-wrapper" id="swiperWrapper"></div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div></div></div>
 
-  <!-- Map Page -->
-  <div class="page" id="map-page">
-    <div class="container">
-      <h1 class="section-title letter-animate">Where you will be</h1>
-      <p style="margin-bottom: 20px;">📍 <strong>Maungani, near University of Venda Main Gate – R523, Thohoyandou</strong></p>
-      <div id="map"></div>
-    </div>
-  </div>
+  <!-- CONTACT -->
+  <div class="page" id="contact-page"><div class="container"><div class="section-sub">GET IN TOUCH</div><h1 class="section-title reveal">Contact Us</h1><div class="contact-grid reveal"><div class="contact-card"><i class="fas fa-phone-alt" style="font-size:2rem; color:var(--gold);"></i><h3>Phone</h3><p>+27 66 267 2037</p><a href="tel:+27662672037" style="color:var(--gold);">Call Now</a></div><div class="contact-card"><i class="fab fa-whatsapp" style="font-size:2rem; color:#25D366;"></i><h3>WhatsApp</h3><p>Chat with our team</p><a href="https://wa.me/27662672037" target="_blank" style="color:#25D366;">Message Us</a></div><div class="contact-card"><i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--gold);"></i><h3>Address</h3><p>Maungani, UNIVEN Main Gate<br>Thohoyandou, 0950</p></div></div><div class="map-wrapper"><div id="map"></div></div><a href="https://maps.google.com/?q=University+of+Venda+Main+Gate" target="_blank" class="btn-outline" style="margin-top:20px; display:inline-block;">Open in Google Maps</a></div></div>
 
-  <!-- Contact Page -->
-  <div class="page" id="contact-page">
-    <div class="container">
-      <h1 class="section-title letter-animate">Contact Us</h1>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; margin-top: 40px;">
-        <div style="background: linear-gradient(145deg, #141414, #0e0e0e); padding: 40px; border-radius: 32px; text-align: center;">
-          <i class="fas fa-phone-alt" style="font-size: 3rem; color: #e63946;"></i>
-          <h3 style="margin: 20px 0;">Phone</h3>
-          <p><a href="tel:+27662672037" style="color: white;">+27 66 267 2037</a></p>
-        </div>
-        <div style="background: linear-gradient(145deg, #141414, #0e0e0e); padding: 40px; border-radius: 32px; text-align: center;">
-          <i class="fab fa-whatsapp" style="font-size: 3rem; color: #25D366;"></i>
-          <h3 style="margin: 20px 0;">WhatsApp</h3>
-          <p><a href="https://wa.me/27662672037" target="_blank" style="color: #25D366;">Click to chat</a></p>
-        </div>
-      </div>
+  <!-- APPLY -->
+  <div class="page" id="apply-page"><div class="container"><div class="section-sub">SECURE YOUR ROOM</div><h1 class="section-title reveal">Application Form</h1>
+    <div class="booking-compare" style="display:flex; gap:20px; flex-wrap:wrap; margin:30px 0;">
+      <div style="background:rgba(255,255,255,0.03); border-radius:24px; padding:20px; flex:1; text-align:center;"><i class="fas fa-check-circle" style="color:var(--gold);"></i><h3>NSFAS Approved</h3><p>Fully accredited for bursary funding</p></div>
+      <div style="background:rgba(255,255,255,0.03); border-radius:24px; padding:20px; flex:1; text-align:center;"><i class="fas fa-bed" style="color:var(--gold);"></i><h3>6 Room Types</h3><p>From R1300 to R3700/month</p></div>
+      <div style="background:rgba(255,255,255,0.03); border-radius:24px; padding:20px; flex:1; text-align:center;"><i class="fas fa-shield-alt" style="color:var(--gold);"></i><h3>24/7 Security</h3><p>CCTV & biometric access</p></div>
     </div>
-  </div>
-</div>
+    <div style="background:rgba(255,255,255,0.03); border-radius:32px; padding:40px;"><form id="applyForm"><input type="text" placeholder="Full Name" required><input type="email" placeholder="Email" required><input type="tel" placeholder="Phone" required><select id="roomSelect"><option value="Premium Suite">Premium Suite - R3700</option><option value="Deluxe Double">Deluxe Double - R2500</option><option value="Comfort Single">Comfort Single - R2300</option><option value="Standard Plus">Standard Plus - R2000</option><option value="Budget Friendly">Budget Friendly - R1700</option><option value="Value Room">Value Room - R1300</option></select><textarea placeholder="Additional info (NSFAS reference, special requests...)" rows="4"></textarea><button type="submit" class="btn-primary" style="width:100%; background:var(--gold); color:var(--bg-dark);">Submit Application</button></form></div></div></div>
+</main>
 
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h4>Quick Links</h4>
-        <ul><li><a href="#">Help Centre</a></li><li><a href="#">Student registration</a></li></ul>
-      </div>
-      <div class="footer-col">
-        <h4>Connect</h4>
-        <div class="social-icons"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div>
-        <div class="footer-whatsapp"><a href="https://wa.me/27662672037" target="_blank"><i class="fab fa-whatsapp"></i> +27 66 267 2037</a></div>
-      </div>
-    </div>
-    <div style="text-align: center; padding-top: 30px;"><p>© 2025 Retema Student Accommodation. All Rights Reserved.</p></div>
-  </div>
-</footer>
+<footer><div class="container"><div class="footer-grid"><div class="footer-col"><h4>RETEMA</h4><p style="color:#B0A89A;">Premier student accommodation at UNIVEN Main Gate.</p></div><div class="footer-col"><h4>Quick Links</h4><a href="#" data-page="home">Home</a><a href="#" data-page="rooms">Rooms</a><a href="#" data-page="apply">Apply</a></div><div class="footer-col"><h4>Contact</h4><a href="tel:+27662672037">+27 66 267 2037</a><a href="https://wa.me/27662672037">WhatsApp</a><a>info@retema.co.za</a></div></div><div style="text-align:center; padding-top:40px;"><p>© 2025 Retema — Cinematic Student Living</p></div></div></footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
 <script>
-  // Person walking to house loading animation with footsteps and percentage
-  let progress = 0;
-  const progressInterval = setInterval(() => {
-    progress += 2;
-    const percentSpan = document.getElementById('progressPercent');
-    if (percentSpan) percentSpan.innerText = Math.min(progress, 100) + '%';
-    if (progress >= 100) {
-      clearInterval(progressInterval);
-    }
-  }, 44);
-  
-  // Add footsteps during animation
-  function addFootstep() {
-    const trail = document.getElementById('footstepTrail');
-    if (!trail) return;
-    const footstep = document.createElement('div');
-    footstep.className = 'footstep';
-    footstep.innerHTML = '<i class="fas fa-shoe-prints"></i>';
-    const randomLeft = Math.random() * 100;
-    footstep.style.left = randomLeft + '%';
-    trail.appendChild(footstep);
-    setTimeout(() => {
-      if (footstep) footstep.remove();
-    }, 600);
-  }
-  
-  let footstepInterval = setInterval(addFootstep, 90);
-  
-  // Hide loading screen after animation completes
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      const loadingScreen = document.getElementById('loadingScreen');
-      if (loadingScreen) {
-        loadingScreen.classList.add('hidden');
-        clearInterval(footstepInterval);
-      }
-    }, 2200);
-  });
+  (function() {
+    // ---------- LOADING SIMULATION ----------
+    let prog = 0;
+    const progInt = setInterval(() => {
+      prog += Math.random() * 15;
+      if (prog >= 100) { prog = 100; clearInterval(progInt); setTimeout(() => { document.getElementById('loadingScreen').classList.add('hidden'); }, 500); }
+      document.getElementById('loadProgress').style.width = Math.min(prog,100) + '%';
+    }, 100);
 
-  const WHATSAPP_NUMBER = "27662672037";
-  
-  // Room data
-  const roomPrices = [3700, 2500, 2300, 2000, 1700, 1300];
-  const roomImages = [
-    ['https://picsum.photos/id/164/800/600', 'https://picsum.photos/id/169/800/600', 'https://picsum.photos/id/175/800/600', 'https://picsum.photos/id/156/800/600'],
-    ['https://picsum.photos/id/20/800/600', 'https://picsum.photos/id/22/800/600', 'https://picsum.photos/id/29/800/600', 'https://picsum.photos/id/96/800/600'],
-    ['https://picsum.photos/id/103/800/600', 'https://picsum.photos/id/107/800/600', 'https://picsum.photos/id/116/800/600', 'https://picsum.photos/id/119/800/600'],
-    ['https://picsum.photos/id/132/800/600', 'https://picsum.photos/id/135/800/600', 'https://picsum.photos/id/142/800/600', 'https://picsum.photos/id/145/800/600'],
-    ['https://picsum.photos/id/152/800/600', 'https://picsum.photos/id/155/800/600', 'https://picsum.photos/id/159/800/600', 'https://picsum.photos/id/161/800/600'],
-    ['https://picsum.photos/id/177/800/600', 'https://picsum.photos/id/178/800/600', 'https://picsum.photos/id/186/800/600', 'https://picsum.photos/id/188/800/600']
-  ];
-  const roomTitles = ["Premium Suite", "Deluxe Double", "Comfort Single", "Standard Plus", "Budget Friendly", "Value Room"];
-  
-  function renderRooms() {
-    const container = document.getElementById('roomsContainer');
-    if (!container) return;
-    container.innerHTML = '';
-    roomPrices.forEach((price, idx) => {
-      let imgsHtml = '';
-      for (let i = 0; i < 4; i++) {
-        imgsHtml += `<a href="${roomImages[idx][i]}" data-lightbox="room-${idx}" data-title="${roomTitles[idx]} - R${price}/month"><img src="${roomImages[idx][i]}" alt="Room view"></a>`;
-      }
-      const whatsappMsg = `Hello! I'm interested in the R${price} ${roomTitles[idx]} at Retema. Please let me know availability.`;
-      const roomWhatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMsg)}`;
-      const card = document.createElement('div');
-      card.className = 'room-card';
-      card.innerHTML = `
-        <div class="room-img-gallery">${imgsHtml}</div>
-        <div class="room-info">
-          <div class="price">R ${price.toLocaleString()} <small>/month</small></div>
-          <div style="font-weight: 700; margin: 8px 0;">${roomTitles[idx]}</div>
-          <div style="margin: 15px 0; display: flex; gap: 15px; font-size: 0.8rem; color: #aaa;">
-            <span><i class="fas fa-shower"></i> En-suite</span>
-            <span><i class="fas fa-wifi"></i> WiFi</span>
-          </div>
-          <a href="${roomWhatsappLink}" target="_blank" class="btn-whatsapp-room"><i class="fab fa-whatsapp"></i> Book Now</a>
-        </div>
-      `;
-      container.appendChild(card);
+    // ---------- SCROLL PROGRESS ----------
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('scrollProgress').style.width = scrolled + '%';
     });
-  }
-  
-  // Amenities
-  const amenities = ['Unlimited WiFi', 'Laundry Site', 'Stove & Fridge', 'Tuckshop', 'Secure Parking', '24/7 CCTV', 'Tight Security', 'Communal Kitchen', 'Hot Water 24/7', 'In-suite Rooms', 'Backup Water'];
-  function renderAmenities() {
-    const container = document.getElementById('amenitiesList');
-    if(container) {
-      container.innerHTML = amenities.map(a => `<div class="amenity-item"><i class="fas fa-check-circle"></i> ${a}</div>`).join('');
+
+    // ---------- LENIS SMOOTH SCROLL ----------
+    const lenis = new Lenis({ duration: 1.2, smoothWheel: true, smoothTouch: true });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
+
+    // ---------- CURSOR GLOW (DESKTOP ONLY) ----------
+    if (window.innerWidth > 768) {
+      document.addEventListener('mousemove', (e) => {
+        const glow = document.querySelector('.cursor-glow');
+        if (glow) glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      });
     }
-  }
-  
-  // Gallery
-  const facilityImgs = ['washing.jpg', 'kitchen.jpg', 'shop.jpg', 'parking.jpg', 'cctv.jpg', 'longe.jpg'];
-  const facilityNames = ['Laundry Area', 'Modern Kitchen', 'On-site Tuckshop', 'Secure Parking', 'CCTV Surveillance', 'Study & Lounge'];
-  function renderGallery() {
-    const galleryDiv = document.getElementById('facilityGallery');
-    if (!galleryDiv) return;
-    galleryDiv.innerHTML = facilityImgs.map((img, idx) => `
-      <div class="gallery-item">
-        <a href="${img}" data-lightbox="facility" data-title="${facilityNames[idx]}">
-          <img src="${img}" alt="${facilityNames[idx]}">
-          <div class="gallery-caption">${facilityNames[idx]}</div>
-        </a>
-      </div>
-    `).join('');
-  }
-  
-  // Page Navigation
-  const menuOverlay = document.getElementById('menuOverlay');
-  const menuButton = document.getElementById('menuButton');
-  const closeMenu = document.getElementById('closeMenu');
-  const menuOptions = document.querySelectorAll('.menu-option');
-  const pages = document.querySelectorAll('.page');
-  
-  function showPage(pageId) {
-    pages.forEach(page => page.classList.remove('active'));
-    const activePage = document.getElementById(`${pageId}-page`);
-    if (activePage) activePage.classList.add('active');
-    if (menuOverlay) menuOverlay.classList.remove('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => triggerLetterAnimation(), 100);
-  }
-  
-  if (menuButton) menuButton.addEventListener('click', () => menuOverlay.classList.add('active'));
-  if (closeMenu) closeMenu.addEventListener('click', () => menuOverlay.classList.remove('active'));
-  menuOptions.forEach(option => option.addEventListener('click', () => showPage(option.getAttribute('data-page'))));
-  const logoHome = document.getElementById('logoHome');
-  if (logoHome) logoHome.addEventListener('click', () => showPage('home'));
-  const exploreBtn = document.getElementById('exploreBtn');
-  if (exploreBtn) exploreBtn.addEventListener('click', () => showPage('rooms'));
-  const contactBtn = document.getElementById('contactBtn');
-  if (contactBtn) contactBtn.addEventListener('click', () => showPage('contact'));
-  if (menuOverlay) menuOverlay.addEventListener('click', (e) => { if (e.target === menuOverlay) menuOverlay.classList.remove('active'); });
-  
-  // Letter-by-letter animation trigger
-  function triggerLetterAnimation() {
-    document.querySelectorAll('.letter-animate').forEach(el => {
-      if (!el.classList.contains('visible') && el.isConnected) {
+
+    // ---------- PAGE TRANSITIONS ----------
+    function transitionTo(pageId) {
+      const overlay = document.getElementById('transitionOverlay');
+      overlay.style.opacity = '1';
+      setTimeout(() => { showPage(pageId); setTimeout(() => { overlay.style.opacity = '0'; }, 100); }, 400);
+    }
+
+    // ---------- ROOMS (with availability) ----------
+    const roomsData = [
+      { title: "Premium Suite", price: 3700, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=450&fit=crop", badge: "🔥 2 left", availability: 2 },
+      { title: "Deluxe Double", price: 2500, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&h=450&fit=crop", badge: "Popular", availability: 5 },
+      { title: "Comfort Single", price: 2300, img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&h=450&fit=crop", badge: "New", availability: 8 },
+      { title: "Standard Plus", price: 2000, img: "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=600&h=450&fit=crop", badge: "5 left", availability: 5 },
+      { title: "Budget Friendly", price: 1700, img: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&h=450&fit=crop", badge: "Limited", availability: 3 },
+      { title: "Value Room", price: 1300, img: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=600&h=450&fit=crop", badge: "Almost gone", availability: 2 }
+    ];
+    function renderRooms() {
+      const grid = document.getElementById('roomsGrid');
+      if(grid) grid.innerHTML = roomsData.map(r => `<div class="room-card"><div class="room-badge">${r.badge}</div><div class="room-img"><img src="${r.img}" loading="lazy" decoding="async" alt="${r.title}"></div><div class="room-info"><h3>${r.title}</h3><div class="room-price">R${r.price}<span style="font-size:0.9rem">/month</span></div><a href="#" data-page="apply" class="btn-primary" style="background:var(--gold); color:var(--bg-dark); display:inline-block; padding:10px 24px; margin-top:15px;">Apply</a></div></div>`).join('');
+    }
+
+    // ---------- AMENITIES ----------
+    const amenitiesList = ["Free WiFi","24/7 Security","Backup Water","Laundry","Tuckshop","Parking","Study Areas","Stove & Fridge","Hot Water","Cleaning","Free Bus","Biometric"];
+    function renderAmenities() {
+      const grid = document.getElementById('amenitiesGrid');
+      if(grid) grid.innerHTML = amenitiesList.map(a => `<div class="amenity-card"><i class="fas fa-check-circle"></i> ${a}</div>`).join('');
+    }
+
+    // ---------- SWIPER GALLERY (slides first, then init) ----------
+    const galleryImages = [
+      "https://images.unsplash.com/photo-1560185009-5c1ae6d66f0a?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1560185127-6ed189b02d34?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&h=600&fit=crop"
+    ];
+    let swiperInstance = null;
+    function initSwiper() {
+      const wrapper = document.getElementById('swiperWrapper');
+      if (!wrapper) return;
+      wrapper.innerHTML = galleryImages.map(img => `<div class="swiper-slide"><img src="${img}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; border-radius:28px;" alt="Gallery"></div>`).join('');
+      if (swiperInstance) swiperInstance.destroy(true, true);
+      swiperInstance = new Swiper('.gallery-swiper', {
+        slidesPerView: 'auto',
+        spaceBetween: 24,
+        loop: true,
+        grabCursor: true,
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination' }
+      });
+      // Attach modal click to swiper slides
+      setTimeout(() => {
+        document.querySelectorAll('.swiper-slide').forEach(slide => {
+          slide.addEventListener('click', () => {
+            const img = slide.querySelector('img');
+            if (img) openModal(img.src);
+          });
+        });
+      }, 100);
+    }
+
+    // ---------- FULLSCREEN MODAL ----------
+    function openModal(src) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      modalImg.src = src;
+      modal.classList.add('active');
+    }
+    document.querySelector('.modal-close')?.addEventListener('click', () => {
+      document.getElementById('imageModal').classList.remove('active');
+    });
+    document.getElementById('imageModal')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('imageModal')) document.getElementById('imageModal').classList.remove('active');
+    });
+
+    // ---------- MAP (single instance, route line) ----------
+    let mapInitialized = false;
+    function initMap() {
+      if (mapInitialized) return;
+      const mapDiv = document.getElementById('map');
+      if (!mapDiv) return;
+      const map = L.map('map').setView([-22.9788, 30.4334], 16);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      const goldIcon = L.divIcon({ html: '<i class="fas fa-map-marker-alt" style="font-size:30px; color:#C6A77D; text-shadow:0 0 10px gold;"></i>', iconSize: [30,30], className: '' });
+      L.marker([-22.9788, 30.4334], { icon: goldIcon }).addTo(map).bindPopup('<b>🏠 Retema</b><br>UNIVEN Main Gate').openPopup();
+      // Route line
+      const univenGate = [-22.9745, 30.4380];
+      L.polyline([[-22.9788, 30.4334], univenGate], { color: '#C6A77D', weight: 2, opacity: 0.6 }).addTo(map);
+      map.flyTo([-22.9788, 30.4334], 17, { duration: 2 });
+      mapInitialized = true;
+    }
+
+    // ---------- PDF GENERATION (printable brochure) ----------
+    function generatePDF() {
+      const win = window.open();
+      win.document.write(`
+        <html><head><title>Retema Brochure</title>
+        <style>
+          body { font-family: 'Inter', sans-serif; background: #0D0D0D; color: #F5F1EB; padding: 40px; }
+          h1 { color: #C6A77D; }
+          .gold { color: #C6A77D; }
+          .section { margin-bottom: 30px; }
+        </style>
+        </head><body>
+        <h1>RETEMA STUDENT ACCOMMODATION</h1>
+        <p><strong>Location:</strong> Maungani, UNIVEN Main Gate, Thohoyandou</p>
+        <div class="section"><h2 class="gold">Rooms & Pricing</h2>${roomsData.map(r => `<p><strong>${r.title}</strong>: R${r.price}/month — ${r.badge}</p>`).join('')}</div>
+        <div class="section"><h2 class="gold">Amenities</h2><ul>${amenitiesList.map(a => `<li>${a}</li>`).join('')}</ul></div>
+        <div class="section"><h2 class="gold">Contact</h2><p>Phone: +27 66 267 2037<br>WhatsApp: +27 66 267 2037<br>Email: info@retema.co.za</p></div>
+        <p>© 2025 Retema — Premier Student Living</p>
+        </body></html>
+      `);
+      win.document.close();
+      win.print();
+    }
+
+    // ---------- FORM SUBMIT (localStorage + haptic) ----------
+    document.getElementById('applyForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = e.target.querySelector('input[placeholder="Full Name"]').value;
+      const email = e.target.querySelector('input[placeholder="Email"]').value;
+      const phone = e.target.querySelector('input[placeholder="Phone"]').value;
+      const room = document.getElementById('roomSelect').value;
+      const application = { name, email, phone, room, date: new Date().toISOString() };
+      let apps = JSON.parse(localStorage.getItem('retema_applications') || '[]');
+      apps.push(application);
+      localStorage.setItem('retema_applications', JSON.stringify(apps));
+      alert(`✓ Thank you ${name}! Your application for ${room} has been received. We will contact you via WhatsApp within 24 hours.`);
+      transitionTo('home');
+      if (navigator.vibrate) navigator.vibrate(50);
+    });
+
+    // ---------- PAGE NAVIGATION ----------
+    const pages = document.querySelectorAll('.page');
+    function showPage(pageId) {
+      pages.forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(`${pageId}-page`);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.nav-link, .mobile-menu a, .mobile-bottom-nav a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-page') === pageId) link.classList.add('active');
+      });
+      document.getElementById('mobileMenu')?.classList.remove('open');
+      if (pageId === 'contact') setTimeout(initMap, 100);
+      if (pageId === 'gallery') setTimeout(initSwiper, 100);
+      if (pageId === 'rooms') renderRooms();
+      if (pageId === 'residence') renderAmenities();
+      // Use Lenis scrollTo to avoid conflict
+      lenis.scrollTo(0, { immediate: true });
+      if (window.gsap && window.ScrollTrigger) { window.gsap.registerPlugin(window.ScrollTrigger); window.ScrollTrigger.refresh(); }
+      setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => {
+          if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('revealed');
+        });
+      }, 150);
+    }
+
+    document.querySelectorAll('[data-page]').forEach(link => {
+      link.addEventListener('click', (e) => { e.preventDefault(); transitionTo(link.getAttribute('data-page')); });
+    });
+    document.getElementById('logoHome')?.addEventListener('click', () => transitionTo('home'));
+    document.querySelector('.menu-icon')?.addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+    document.querySelector('.close-menu')?.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+    document.getElementById('pdfDownloadBtn')?.addEventListener('click', generatePDF);
+
+    // ---------- GSAP SCROLL REVEAL ----------
+    function initGSAP() {
+      if (!window.gsap || !window.ScrollTrigger) return;
+      window.gsap.registerPlugin(window.ScrollTrigger);
+      document.querySelectorAll('.reveal').forEach(el => {
+        window.ScrollTrigger.create({ trigger: el, start: 'top 85%', onEnter: () => el.classList.add('revealed'), once: true });
+      });
+      window.gsap.to('.hero-media', {
+        scale: 1.08,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+      });
+    }
+    setTimeout(initGSAP, 500);
+
+    // ---------- LETTER-BY-LETTER (blur -> clear) ----------
+    function animateLetterByLetter() {
+      const heroTitle = document.getElementById('heroTitle');
+      const heroDesc = document.getElementById('heroDesc');
+      const heroBadge = document.getElementById('heroBadge');
+      if (!heroTitle || heroTitle.dataset.animated) return;
+      const texts = [heroTitle, heroDesc, heroBadge];
+      texts.forEach(el => {
         const text = el.innerText;
-        el.innerHTML = text.split('').map(char => `<span class="letter">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
-        el.classList.add('visible');
-        const letters = el.querySelectorAll('.letter');
-        letters.forEach((letter, i) => {
-          setTimeout(() => {
-            letter.style.opacity = '1';
-            letter.style.transform = 'translateY(0)';
-          }, i * 35);
-        });
-      }
-    });
-  }
-  
-  // Reviews System
-  let reviews = [{ name: "Thabo M.", rating: 5, comment: "Amazing place, super close to UNIVEN gate. WiFi is fast, security is top-notch!", date: "2025-02-15" }];
-  function updateReviewsUI() {
-    const reviewsDiv = document.getElementById('reviewsList');
-    const countSpan = document.getElementById('reviewCount');
-    const avgStarsSpan = document.getElementById('avgStars');
-    const avgNumSpan = document.getElementById('avgRatingDisplay');
-    if (!reviewsDiv) return;
-    if (reviews.length === 0) { reviewsDiv.innerHTML = '<div class="review-card"><i>No reviews yet.</i></div>'; return; }
-    let total = reviews.reduce((s,r) => s + r.rating, 0);
-    const avg = total / reviews.length;
-    const fullStars = Math.round(avg);
-    let starStr = '';
-    for (let i = 1; i <= 5; i++) starStr += i <= fullStars ? '★' : '☆';
-    if (avgStarsSpan) avgStarsSpan.innerHTML = starStr;
-    if (avgNumSpan) avgNumSpan.innerText = avg.toFixed(1);
-    if (countSpan) countSpan.innerText = reviews.length;
-    reviewsDiv.innerHTML = reviews.slice().reverse().map(r => {
-      let revStars = '';
-      for (let i = 1; i <= 5; i++) revStars += i <= r.rating ? '★' : '☆';
-      return `<div class="review-card"><strong>${r.name}</strong> ${revStars}<br><p style="margin-top:12px;">${r.comment}</p><span style="font-size:12px; color:#888;">${r.date}</span></div>`;
-    }).join('');
-  }
-  const submitReview = document.getElementById('submitReview');
-  if (submitReview) {
-    submitReview.addEventListener('click', () => {
-      const name = document.getElementById('reviewerName')?.value.trim();
-      const rating = parseInt(document.getElementById('reviewRating')?.value);
-      const comment = document.getElementById('reviewComment')?.value.trim();
-      if (!name || !comment) { alert('Please enter your name and review.'); return; }
-      reviews.push({ name, rating, comment, date: new Date().toLocaleDateString('en-ZA') });
-      updateReviewsUI();
-      if (document.getElementById('reviewerName')) document.getElementById('reviewerName').value = '';
-      if (document.getElementById('reviewComment')) document.getElementById('reviewComment').value = '';
-      alert('Thank you for your review!');
-    });
-  }
-  
-  // Map with exact coordinates
-  function initMap() {
-    const mapDiv = document.getElementById('map');
-    if (mapDiv && typeof L !== 'undefined') {
-      const location = [-22.978815, 30.433430];
-      const map = L.map('map').setView(location, 17);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-      L.marker(location).addTo(map).bindPopup('<b>🏠 Retema Student Accommodation</b><br>Maungani, UNIVEN Main Gate<br>📍 Premium student living');
+        el.innerHTML = '';
+        for (let char of text) {
+          const span = document.createElement('span');
+          span.className = 'letter-span';
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          el.appendChild(span);
+        }
+      });
+      const letters = document.querySelectorAll('#heroTitle .letter-span, #heroDesc .letter-span, #heroBadge .letter-span');
+      letters.forEach((letter, i) => { setTimeout(() => letter.classList.add('revealed'), i * 35); });
+      heroTitle.dataset.animated = true;
     }
-  }
-  
-  // Initialize everything
-  renderRooms();
-  renderAmenities();
-  renderGallery();
-  updateReviewsUI();
-  
-  setTimeout(() => {
-    initMap();
-    triggerLetterAnimation();
-  }, 500);
-  
-  // Intersection Observer for letter animations on scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
-        const text = entry.target.innerText;
-        entry.target.innerHTML = text.split('').map(char => `<span class="letter">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
-        entry.target.classList.add('visible');
-        const letters = entry.target.querySelectorAll('.letter');
-        letters.forEach((letter, i) => {
-          setTimeout(() => {
-            letter.style.opacity = '1';
-            letter.style.transform = 'translateY(0)';
-          }, i * 35);
-        });
-        observer.unobserve(entry.target);
-      }
+
+    // ---------- IMAGE UPLOADS (hero + R) ----------
+    const heroSection = document.getElementById('heroSection');
+    heroSection?.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*, video/*';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const url = URL.createObjectURL(file);
+          const mediaDiv = document.querySelector('.hero-media');
+          if (file.type.startsWith('video/')) {
+            mediaDiv.innerHTML = `<video autoplay muted loop playsinline><source src="${url}"></video>`;
+          } else {
+            mediaDiv.innerHTML = `<img src="${url}" alt="Hero background" fetchpriority="high">`;
+          }
+        }
+      };
+      input.click();
     });
-  }, { threshold: 0.3 });
-  document.querySelectorAll('.letter-animate').forEach(el => observer.observe(el));
+    document.getElementById('rImageArea')?.addEventListener('click', () => {
+      const inp = document.createElement('input');
+      inp.type = 'file';
+      inp.accept = 'image/*';
+      inp.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) { document.getElementById('rShapeImage').src = URL.createObjectURL(file); }
+      };
+      inp.click();
+    });
+
+    // ---------- ANIMATED COUNTERS ----------
+    const counters = document.querySelectorAll('.stat-number');
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseFloat(el.getAttribute('data-count'));
+          let val = 0;
+          const update = () => {
+            val += Math.ceil(target / 35);
+            if (val >= target) el.innerText = target + (el.innerText.includes('km')?'km':(el.innerText.includes('%')?'%':(el.innerText.includes('/7')?'/7':'')));
+            else { el.innerText = val + (el.innerText.includes('km')?'km':(el.innerText.includes('%')?'%':(el.innerText.includes('/7')?'/7':''))); requestAnimationFrame(update); }
+          };
+          update();
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(c => counterObserver.observe(c));
+
+    // ---------- INITIAL LOAD ----------
+    renderRooms(); renderAmenities(); initSwiper(); showPage('home');
+    setTimeout(animateLetterByLetter, 400);
+    // Lazy load non-critical scripts
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => { /* any extra non-critical init */ });
+    }
+  })();
 </script>
 </body>
 </html>
