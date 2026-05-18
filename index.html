@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>Retema | Cinematic Student Living • UNIVEN Thohoyandou</title>
   
   <!-- SEO -->
-  <meta name="description" content="Premium student accommodation at UNIVEN main gate. Luxury rooms, NSFAS friendly, 24/7 security, free WiFi.">
-  <meta name="keywords" content="student accommodation Thohoyandou, UNIVEN housing, NSFAS approved">
+  <meta name="description" content="Premium student accommodation at UNIVEN Maungani gate. Luxury rooms, NSFAS friendly, 24/7 security, free WiFi.">
+  <meta name="keywords" content="student accommodation Thohoyandou, UNIVEN housing, NSFAS approved, Maungani">
   <meta property="og:title" content="Retema | Premier Student Living">
   <meta property="og:type" content="website">
   <meta name="geo.region" content="ZA-LP">
   <meta name="geo.position" content="-22.9788;30.4334">
   
-  <!-- Fonts -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -27,6 +27,8 @@
       --gold-dark: #7A5C3E;
       --text-light: #F5F1EB;
       --glass-bg: rgba(13, 13, 13, 0.85);
+      --card-bg: rgba(255,255,255,0.03);
+      --border-light: rgba(198,167,125,0.15);
     }
     
     body {
@@ -34,6 +36,7 @@
       background: var(--bg-dark);
       color: var(--text-light);
       overflow-x: hidden;
+      line-height: 1.5;
     }
     
     /* Ambient grain overlay */
@@ -48,7 +51,6 @@
       mix-blend-mode: soft-light;
     }
     
-    /* Scroll progress bar */
     .scroll-progress {
       position: fixed;
       top: 0;
@@ -60,7 +62,6 @@
       transition: width 0.1s;
     }
     
-    /* Cursor glow - desktop only */
     @media (hover: hover) {
       .cursor-glow {
         width: 300px;
@@ -71,10 +72,11 @@
         z-index: 9999;
         transform: translate(-50%, -50%);
         border-radius: 50%;
+        display: none; /* hidden on mobile by default, shown via js if desktop */
       }
     }
     
-    /* Loading Screen */
+    /* Loading Screen - Centered fix */
     .loading-screen {
       position: fixed;
       top: 0;
@@ -92,7 +94,7 @@
     .loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     .loading-logo {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 4rem;
+      font-size: clamp(3rem, 8vw, 4.5rem);
       letter-spacing: 8px;
       color: var(--gold);
       animation: pulseGlow 1.5s infinite;
@@ -103,7 +105,7 @@
       100% { text-shadow: 0 0 0 rgba(198,167,125,0); }
     }
     .loading-bar {
-      width: 280px;
+      width: min(280px, 70vw);
       height: 2px;
       background: rgba(255,255,255,0.2);
       border-radius: 2px;
@@ -131,13 +133,13 @@
       transition: all 0.3s;
     }
     .navbar.scrolled { padding: 10px 0; background: rgba(13,13,13,0.96); }
-    .container { max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+    .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
     .nav-flex { display: flex; justify-content: space-between; align-items: center; }
     .logo {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2rem;
       font-weight: 700;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
       color: var(--gold);
       cursor: pointer;
     }
@@ -149,6 +151,7 @@
       font-size: 0.85rem;
       font-weight: 500;
       transition: 0.3s;
+      white-space: nowrap;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--gold); }
     .apply-nav {
@@ -156,10 +159,16 @@
       color: var(--bg-dark) !important;
       padding: 10px 28px;
       border-radius: 40px;
+      font-weight: 600;
     }
     .apply-nav:hover { background: var(--gold-dark); color: white !important; }
     .menu-icon { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
-    @media (max-width: 900px) { .nav-links { display: none; } .menu-icon { display: block; } .container { padding: 0 24px; } }
+    
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .menu-icon { display: block; }
+      .container { padding: 0 20px; }
+    }
     
     /* Mobile menu */
     .mobile-menu {
@@ -200,11 +209,11 @@
       z-index: 1000;
       border-top: 1px solid rgba(198,167,125,0.3);
     }
-    .mobile-bottom-nav a { color: var(--text-light); font-size: 1.2rem; text-align: center; flex: 1; text-decoration: none; }
-    .mobile-bottom-nav a i { display: block; margin-bottom: 4px; }
+    .mobile-bottom-nav a { color: var(--text-light); font-size: 0.9rem; text-align: center; flex: 1; text-decoration: none; }
+    .mobile-bottom-nav a i { display: block; margin-bottom: 4px; font-size: 1.2rem; }
     @media (max-width: 900px) { .mobile-bottom-nav { display: flex; } body { padding-bottom: 70px; } }
     
-    /* Page visibility - CRITICAL FIX */
+    /* Page system */
     .page { display: none; min-height: 100vh; padding-top: 100px; }
     .page.active { display: block; animation: pageFadeIn 0.5s ease; }
     @keyframes pageFadeIn {
@@ -212,7 +221,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* Page transition overlay */
     .transition-overlay {
       position: fixed;
       top: 0;
@@ -226,7 +234,7 @@
       transition: opacity 0.5s ease;
     }
     
-    /* Hero Section */
+    /* Hero */
     .hero {
       min-height: 90vh;
       background: linear-gradient(135deg, #0D0D0D 0%, #1A1A1A 100%);
@@ -246,10 +254,7 @@
       background: radial-gradient(circle, rgba(198,167,125,0.08) 0%, transparent 70%);
       animation: rotateGlow 25s linear infinite;
     }
-    @keyframes rotateGlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    @keyframes rotateGlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .hero-content { position: relative; z-index: 2; max-width: 700px; }
     .hero-badge {
       display: inline-block;
@@ -264,7 +269,7 @@
     }
     .hero h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 4.5rem;
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
       font-weight: 700;
       line-height: 1.1;
       margin-bottom: 24px;
@@ -272,19 +277,14 @@
     .hero h1 span { color: var(--gold); }
     .hero p { font-size: 1.1rem; opacity: 0.8; margin-bottom: 32px; line-height: 1.6; }
     
-    /* Letter-by-letter animation */
     .letter-span {
       display: inline-block;
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.08s cubic-bezier(0.2, 0.9, 0.4, 1.2);
     }
-    .letter-span.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .letter-span.revealed { opacity: 1; transform: translateY(0); }
     
-    /* Buttons */
     .btn-primary, .btn-outline {
       padding: 14px 36px;
       border-radius: 50px;
@@ -294,19 +294,19 @@
       display: inline-block;
       cursor: pointer;
       border: none;
+      font-size: 0.9rem;
+      margin: 5px 10px 5px 0;
     }
     .btn-primary { background: var(--gold); color: var(--bg-dark); }
     .btn-primary:hover { transform: translateY(-3px); background: var(--gold-dark); color: white; }
     .btn-outline { border: 1px solid rgba(255,255,255,0.4); color: white; background: transparent; }
     .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
     
-    /* Section styles */
     .section-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 3rem;
+      font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 600;
       margin-bottom: 15px;
-      color: var(--text-light);
     }
     .section-sub {
       color: var(--gold);
@@ -317,71 +317,53 @@
     }
     section { padding: 60px 0; }
     
-    /* Scroll reveal animation */
     .reveal {
       opacity: 0;
       transform: translateY(40px);
       transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    .reveal.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
     
-    /* R-Shape Section */
-    .r-shape-section {
-      display: flex;
-      align-items: center;
-      gap: 60px;
-      background: rgba(245,241,235,0.03);
-      border-radius: 48px;
-      padding: 60px;
-      margin: 40px 0;
-      border: 1px solid rgba(198,167,125,0.2);
-    }
-    .r-image-area { flex: 1; cursor: pointer; position: relative; }
-    .r-image-area img { width: 100%; height: 400px; object-fit: cover; border-radius: 32px; }
-    .r-text-area { flex: 1; }
-    .r-letter { font-size: 8rem; font-family: 'Cormorant Garamond', serif; color: var(--gold); }
-    @media (max-width: 900px) { .r-shape-section { flex-direction: column; padding: 30px; } .r-image-area img { height: 250px; } }
-    
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 30px;
-      margin: 50px 0;
-    }
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border-radius: 24px;
-      padding: 35px 20px;
-      text-align: center;
-      border: 1px solid rgba(198,167,125,0.15);
-      transition: 0.3s;
-    }
-    .stat-card:hover { transform: translateY(-5px); border-color: var(--gold); }
-    .stat-number { font-size: 2.8rem; font-weight: 800; color: var(--gold); }
-    
-    /* Rooms Grid */
+    /* Rooms Grid - 5 photos space */
     .rooms-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 40px;
       margin-top: 40px;
     }
     .room-card {
-      background: rgba(255,255,255,0.03);
+      background: var(--card-bg);
       border-radius: 28px;
       overflow: hidden;
-      border: 1px solid rgba(198,167,125,0.15);
+      border: 1px solid var(--border-light);
       transition: all 0.4s;
     }
-    .room-card:hover { transform: translateY(-10px); border-color: var(--gold); }
-    .room-img { height: 250px; overflow: hidden; }
-    .room-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-    .room-card:hover .room-img img { transform: scale(1.05); }
-    .room-info { padding: 28px; }
+    .room-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+    .room-photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 4px;
+      height: 220px;
+    }
+    .room-photos .main-img {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      height: 140px;
+    }
+    .room-photos .sub-img {
+      height: 76px;
+      cursor: pointer;
+    }
+    .room-photos img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 0.4s;
+      display: block;
+    }
+    .room-card:hover .room-photos img { transform: scale(1.02); }
+    .room-info { padding: 24px; }
     .room-price { font-size: 1.8rem; font-weight: 700; color: var(--gold); margin: 10px 0; }
     .room-badge {
       display: inline-block;
@@ -391,17 +373,17 @@
       border-radius: 20px;
       font-size: 0.7rem;
       margin-bottom: 10px;
+      font-weight: 600;
     }
     
-    /* Amenities Grid */
     .amenities-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 20px;
       margin-top: 40px;
     }
     .amenity-card {
-      background: rgba(255,255,255,0.03);
+      background: var(--card-bg);
       border-radius: 20px;
       padding: 20px 24px;
       display: flex;
@@ -412,10 +394,9 @@
     .amenity-card:hover { background: rgba(198,167,125,0.1); transform: translateX(5px); }
     .amenity-card i { font-size: 1.6rem; color: var(--gold); }
     
-    /* Gallery Grid */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 25px;
       margin-top: 40px;
     }
@@ -428,39 +409,35 @@
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
     .gallery-item:hover img { transform: scale(1.05); }
     
-    /* Map */
     .map-wrapper { border-radius: 32px; overflow: hidden; margin: 30px 0; border: 1px solid rgba(198,167,125,0.3); }
     #map { height: 450px; width: 100%; background: #1a1a1a; }
     
-    /* Contact Grid */
     .contact-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 40px;
       margin-top: 40px;
     }
     .contact-card {
-      background: rgba(255,255,255,0.03);
+      background: var(--card-bg);
       border-radius: 28px;
       padding: 40px;
       text-align: center;
     }
     
-    /* Form */
     input, textarea, select {
       width: 100%;
       padding: 16px 20px;
       margin: 12px 0;
       border-radius: 18px;
-      border: 1px solid rgba(198,167,125,0.15);
-      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-light);
+      background: var(--card-bg);
       color: white;
       outline: none;
       font-size: 1rem;
     }
     input:focus, textarea:focus, select:focus { border-color: var(--gold); }
     
-    /* Footer */
     footer {
       background: #0A0A0A;
       padding: 60px 0 30px;
@@ -476,33 +453,52 @@
     .footer-col a { color: #B0A89A; text-decoration: none; display: block; margin: 10px 0; transition: 0.2s; }
     .footer-col a:hover { color: var(--gold); padding-left: 5px; }
     
+    /* Lightbox for images */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 10003;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 16px;
+    }
+    
     @media (max-width: 768px) {
-      .hero h1 { font-size: 2.5rem; }
-      .section-title { font-size: 2rem; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .btn-primary, .btn-outline { padding: 12px 24px; }
     }
   </style>
 </head>
 <body>
 
 <div class="scroll-progress" id="scrollProgress"></div>
-<div class="cursor-glow"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
 <div class="transition-overlay" id="transitionOverlay"></div>
 
-<!-- Loading Screen -->
+<!-- Loading Screen (centered) -->
 <div class="loading-screen" id="loadingScreen">
   <div class="loading-logo">RETEMA</div>
   <div class="loading-bar"><div class="loading-progress" id="loadProgress"></div></div>
 </div>
 
 <!-- Floating WhatsApp -->
-<a href="https://wa.me/27662672037" class="float-wa" style="position:fixed; bottom:30px; right:30px; background:#25D366; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.8rem; z-index:99; text-decoration:none; box-shadow:0 8px 20px rgba(37,211,102,0.3);"><i class="fab fa-whatsapp"></i></a>
+<a href="https://wa.me/27662672037" style="position:fixed; bottom:30px; right:30px; background:#25D366; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.8rem; z-index:99; text-decoration:none; box-shadow:0 8px 20px rgba(37,211,102,0.3);"><i class="fab fa-whatsapp"></i></a>
 
 <!-- Navbar -->
 <div class="navbar" id="navbar">
   <div class="container nav-flex">
     <div class="logo" id="logoHome">RETE<span>MA</span></div>
-    <div class="nav-links">
+    <div class="nav-links" id="desktopNav">
       <a href="#" data-page="home" class="nav-link active">HOME</a>
       <a href="#" data-page="about" class="nav-link">ABOUT</a>
       <a href="#" data-page="residence" class="nav-link">RESIDENCE</a>
@@ -511,12 +507,12 @@
       <a href="#" data-page="contact" class="nav-link">CONTACT</a>
       <a href="#" data-page="apply" class="apply-nav">APPLY</a>
     </div>
-    <div class="menu-icon"><i class="fas fa-bars"></i></div>
+    <div class="menu-icon" id="menuIcon"><i class="fas fa-bars"></i></div>
   </div>
 </div>
 
 <div class="mobile-menu" id="mobileMenu">
-  <div class="close-menu">✕</div>
+  <div class="close-menu" id="closeMenu">✕</div>
   <a href="#" data-page="home">HOME</a>
   <a href="#" data-page="about">ABOUT</a>
   <a href="#" data-page="residence">RESIDENCE</a>
@@ -538,12 +534,12 @@
   <div class="page active" id="home-page">
     <div class="hero">
       <div class="container hero-content">
-        <div class="hero-badge" id="heroBadge">✦ MAUNGANI | UNIVEN MAIN GATE ✦</div>
+        <div class="hero-badge" id="heroBadge">✦ MAUNGANI | UNIVEN GATE ✦</div>
         <h1 id="heroTitle">Superior Student Living<br>in <span>Thohoyandou</span></h1>
         <p id="heroDesc">Premium accommodation for funded & unfunded students. Steps from University of Venda. Safe, modern & built for success.</p>
         <div>
           <a href="#" data-page="rooms" class="btn-primary">Explore Rooms</a>
-          <a href="#" data-page="apply" class="btn-outline" style="margin-left:15px;">Apply Now</a>
+          <a href="#" data-page="apply" class="btn-outline">Apply Now</a>
         </div>
       </div>
     </div>
@@ -554,47 +550,32 @@
     <div class="container">
       <div class="section-sub">ABOUT RETEMA</div>
       <h1 class="section-title reveal">Premium Student Accommodation</h1>
+      <p class="reveal" style="color:#B0A89A; max-width:800px; margin-bottom:30px;">Located at Maungani, right next to UNIVEN Gate. The 'R' represents our dedication to exceptional student living.</p>
       
-      <div class="r-shape-section reveal">
-        <div class="r-image-area" id="rImageArea">
-          <img id="rShapeImage" src="https://placehold.co/800x600/1a1a1a/C6A77D?text=Click+to+upload+image" loading="lazy">
-          <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); padding:5px 10px; border-radius:20px; font-size:0.7rem;"><i class="fas fa-cloud-upload-alt"></i> Click</div>
-        </div>
-        <div class="r-text-area">
-          <div class="r-letter">R</div>
-          <h2 style="font-size:2rem; margin:15px 0;">Retema Excellence</h2>
-          <p style="color:#B0A89A; line-height:1.7;">Our signature commitment to quality, security, and student success. Located at Maungani, right next to UNIVEN Main Gate. The 'R' represents our dedication to providing exceptional student living experiences.</p>
-        </div>
+      <div class="stats-grid reveal">
+        <div class="stat-card"><div class="stat-number" data-count="1040">0</div><div>Total Beds</div></div>
+        <div class="stat-card"><div class="stat-number" data-count="24">0/7</div><div>Security & CCTV</div></div>
+        <div class="stat-card"><div class="stat-number" data-count="100">0%</div><div>WiFi Coverage</div></div>
+        <div class="stat-card"><div class="stat-number" data-count="1.3">0 km</div><div>From UNIVEN</div></div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-card reveal"><div class="stat-number" data-count="1040">0</div><div>Total Beds</div></div>
-        <div class="stat-card reveal"><div class="stat-number" data-count="24">0/7</div><div>Security & CCTV</div></div>
-        <div class="stat-card reveal"><div class="stat-number" data-count="100">0%</div><div>WiFi Coverage</div></div>
-        <div class="stat-card reveal"><div class="stat-number" data-count="1.3">0 km</div><div>From UNIVEN</div></div>
-      </div>
-      
-      <p class="reveal" style="line-height:1.8; color:#B0A89A;">Retema offers premium NSFAS-friendly accommodation at Maungani, right next to UNIVEN Main Gate. Each unit features in-suite stoves, fridges, laundry facilities, tuckshop, secure parking, 24/7 CCTV, unlimited WiFi, and backup water & electricity. Your home away from home.</p>
     </div>
   </div>
 
-  <!-- RESIDENCE PAGE -->
+  <!-- RESIDENCE PAGE (no beds/study area) -->
   <div class="page" id="residence-page">
     <div class="container">
       <div class="section-sub">THE RESIDENCE</div>
       <h1 class="section-title reveal">Facilities & Amenities</h1>
       <div class="amenities-grid" id="amenitiesGrid"></div>
-      
       <div style="background:rgba(198,167,125,0.1); border-radius:28px; padding:40px; text-align:center; margin-top:50px;">
         <i class="fas fa-download" style="font-size:2rem; color:var(--gold);"></i>
         <h3 style="margin:15px 0;">Download Brochure</h3>
-        <p>Complete info about rooms, pricing, and amenities</p>
-        <button id="pdfDownloadBtn" class="btn-primary" style="background:var(--gold); color:var(--bg-dark); margin-top:15px;">📄 Download PDF Brochure</button>
+        <button id="pdfDownloadBtn" class="btn-primary">📄 Download PDF Brochure</button>
       </div>
     </div>
   </div>
 
-  <!-- ROOMS PAGE -->
+  <!-- ROOMS PAGE (5 photos per room) -->
   <div class="page" id="rooms-page">
     <div class="container">
       <div class="section-sub">ROOMS & PRICING</div>
@@ -617,29 +598,12 @@
     <div class="container">
       <div class="section-sub">GET IN TOUCH</div>
       <h1 class="section-title reveal">Contact Us</h1>
-      
       <div class="contact-grid reveal">
-        <div class="contact-card">
-          <i class="fas fa-phone-alt" style="font-size:2rem; color:var(--gold);"></i>
-          <h3 style="margin:15px 0;">Phone</h3>
-          <p>+27 66 267 2037</p>
-          <a href="tel:+27662672037" style="color:var(--gold);">Call Now</a>
-        </div>
-        <div class="contact-card">
-          <i class="fab fa-whatsapp" style="font-size:2rem; color:#25D366;"></i>
-          <h3 style="margin:15px 0;">WhatsApp</h3>
-          <p>Chat with our team</p>
-          <a href="https://wa.me/27662672037" target="_blank" style="color:#25D366;">Message Us</a>
-        </div>
-        <div class="contact-card">
-          <i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--gold);"></i>
-          <h3 style="margin:15px 0;">Address</h3>
-          <p>Maungani, UNIVEN Main Gate<br>Thohoyandou, 0950</p>
-        </div>
+        <div class="contact-card"><i class="fas fa-phone-alt" style="font-size:2rem; color:var(--gold);"></i><h3>Phone</h3><p>+27 66 267 2037</p></div>
+        <div class="contact-card"><i class="fab fa-whatsapp" style="font-size:2rem; color:#25D366;"></i><h3>WhatsApp</h3><a href="https://wa.me/27662672037">Message Us</a></div>
+        <div class="contact-card"><i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--gold);"></i><h3>Address</h3><p>Maungani, UNIVEN Gate<br>Thohoyandou, 0950</p></div>
       </div>
-      
       <div class="map-wrapper"><div id="map"></div></div>
-      <a href="https://maps.google.com/?q=University+of+Venda+Main+Gate" target="_blank" class="btn-outline" style="margin-top:20px; display:inline-block;">Open in Google Maps</a>
     </div>
   </div>
 
@@ -648,31 +612,12 @@
     <div class="container">
       <div class="section-sub">SECURE YOUR ROOM</div>
       <h1 class="section-title reveal">Application Form</h1>
-      
-      <div style="display:flex; gap:20px; flex-wrap:wrap; margin:30px 0;">
-        <div style="background:rgba(255,255,255,0.03); border-radius:24px; padding:20px; flex:1; text-align:center;">
-          <i class="fas fa-check-circle" style="color:var(--gold); font-size:2rem;"></i>
-          <h3 style="margin:10px 0;">NSFAS Approved</h3>
-          <p>Fully accredited for bursary funding</p>
-        </div>
-        <div style="background:rgba(255,255,255,0.03); border-radius:24px; padding:20px; flex:1; text-align:center;">
-          <i class="fas fa-bed" style="color:var(--gold); font-size:2rem;"></i>
-          <h3 style="margin:10px 0;">6 Room Types</h3>
-          <p>From R1300 to R3700/month</p>
-        </div>
-        <div style="background:rgba(255,255,255,0.03); border-radius:24px; padding:20px; flex:1; text-align:center;">
-          <i class="fas fa-shield-alt" style="color:var(--gold); font-size:2rem;"></i>
-          <h3 style="margin:10px 0;">24/7 Security</h3>
-          <p>CCTV & biometric access</p>
-        </div>
-      </div>
-      
-      <div style="background:rgba(255,255,255,0.03); border-radius:32px; padding:40px;">
+      <div style="background:var(--card-bg); border-radius:32px; padding:40px;">
         <form id="applyForm">
           <input type="text" placeholder="Full Name" required>
           <input type="email" placeholder="Email Address" required>
           <input type="tel" placeholder="Phone Number" required>
-          <select id="roomSelect">
+          <select>
             <option>Premium Suite - R3700/month</option>
             <option>Deluxe Double - R2500/month</option>
             <option>Comfort Single - R2300/month</option>
@@ -680,8 +625,8 @@
             <option>Budget Friendly - R1700/month</option>
             <option>Value Room - R1300/month</option>
           </select>
-          <textarea placeholder="Additional Information (NSFAS reference, special requests...)" rows="4"></textarea>
-          <button type="submit" class="btn-primary" style="width:100%; background:var(--gold); color:var(--bg-dark);">Submit Application</button>
+          <textarea placeholder="Additional Info" rows="3"></textarea>
+          <button type="submit" class="btn-primary" style="width:100%;">Submit Application</button>
         </form>
       </div>
     </div>
@@ -691,359 +636,218 @@
 <footer>
   <div class="container">
     <div class="footer-grid">
-      <div class="footer-col">
-        <h4>RETEMA</h4>
-        <p style="color:#B0A89A;">Premier student accommodation at UNIVEN Main Gate.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Quick Links</h4>
-        <a href="#" data-page="home">Home</a>
-        <a href="#" data-page="rooms">Rooms</a>
-        <a href="#" data-page="apply">Apply</a>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <a href="tel:+27662672037">+27 66 267 2037</a>
-        <a href="https://wa.me/27662672037">WhatsApp</a>
-        <a>info@retema.co.za</a>
-      </div>
+      <div class="footer-col"><h4>RETEMA</h4><p style="color:#B0A89A;">Maungani, UNIVEN Gate.</p></div>
+      <div class="footer-col"><h4>Links</h4><a href="#" data-page="home">Home</a><a href="#" data-page="rooms">Rooms</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="tel:+27662672037">+27 66 267 2037</a></div>
     </div>
-    <div style="text-align:center; padding-top:40px;"><p>© 2025 Retema Student Accommodation. All Rights Reserved.</p></div>
+    <div style="text-align:center; padding-top:30px; color:#B0A89A;">© 2025 Retema.</div>
   </div>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  // ---------- LOADING SCREEN ----------
-  let progress = 0;
-  const progressInterval = setInterval(() => {
-    progress += Math.random() * 12;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(progressInterval);
-      setTimeout(() => { document.getElementById('loadingScreen').classList.add('hidden'); }, 500);
-    }
-    document.getElementById('loadProgress').style.width = Math.min(progress, 100) + '%';
-  }, 100);
+  (function() {
+    // LOADING SCREEN
+    let progress = 0;
+    const loadProgress = document.getElementById('loadProgress');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const interval = setInterval(() => {
+      progress += Math.random() * 14;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        setTimeout(() => loadingScreen.classList.add('hidden'), 400);
+      }
+      loadProgress.style.width = Math.min(progress, 100) + '%';
+    }, 80);
 
-  // ---------- SCROLL PROGRESS ----------
-  window.addEventListener('scroll', () => {
-    const winScroll = document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - window.innerHeight;
-    const scrolled = (winScroll / height) * 100;
-    document.getElementById('scrollProgress').style.width = scrolled + '%';
-    document.getElementById('navbar').classList.toggle('scrolled', winScroll > 50);
-  });
-
-  // ---------- CURSOR GLOW ----------
-  if (window.innerWidth > 768) {
-    document.addEventListener('mousemove', (e) => {
-      const glow = document.querySelector('.cursor-glow');
-      if (glow) glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    // SCROLL PROGRESS
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('scrollProgress').style.width = (winScroll / height) * 100 + '%';
+      document.getElementById('navbar').classList.toggle('scrolled', winScroll > 50);
     });
-  }
 
-  // ---------- ROOM DATA ----------
-  const rooms = [
-    { title: "Premium Suite", price: 3700, img: "https://picsum.photos/id/164/600/450", badge: "🔥 2 left" },
-    { title: "Deluxe Double", price: 2500, img: "https://picsum.photos/id/20/600/450", badge: "Popular" },
-    { title: "Comfort Single", price: 2300, img: "https://picsum.photos/id/103/600/450", badge: "New" },
-    { title: "Standard Plus", price: 2000, img: "https://picsum.photos/id/132/600/450", badge: "5 left" },
-    { title: "Budget Friendly", price: 1700, img: "https://picsum.photos/id/152/600/450", badge: "Limited" },
-    { title: "Value Room", price: 1300, img: "https://picsum.photos/id/177/600/450", badge: "Almost gone" }
-  ];
-  
-  function renderRooms() {
-    const grid = document.getElementById('roomsGrid');
-    if (grid) {
+    // CURSOR GLOW (desktop only)
+    const glow = document.getElementById('cursorGlow');
+    if (window.matchMedia('(hover: hover)').matches) {
+      glow.style.display = 'block';
+      document.addEventListener('mousemove', e => {
+        glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      });
+    }
+
+    // ROOM DATA (5 photos each)
+    const rooms = [
+      { title: "Premium Suite", price: 3700, badge: "🔥 2 left", imgs: ["https://picsum.photos/id/164/400/300","https://picsum.photos/id/165/200/150","https://picsum.photos/id/166/200/150","https://picsum.photos/id/167/200/150","https://picsum.photos/id/168/200/150"] },
+      { title: "Deluxe Double", price: 2500, badge: "Popular", imgs: ["https://picsum.photos/id/20/400/300","https://picsum.photos/id/21/200/150","https://picsum.photos/id/22/200/150","https://picsum.photos/id/23/200/150","https://picsum.photos/id/24/200/150"] },
+      { title: "Comfort Single", price: 2300, badge: "New", imgs: ["https://picsum.photos/id/103/400/300","https://picsum.photos/id/104/200/150","https://picsum.photos/id/105/200/150","https://picsum.photos/id/106/200/150","https://picsum.photos/id/107/200/150"] },
+      { title: "Standard Plus", price: 2000, badge: "5 left", imgs: ["https://picsum.photos/id/132/400/300","https://picsum.photos/id/133/200/150","https://picsum.photos/id/134/200/150","https://picsum.photos/id/135/200/150","https://picsum.photos/id/136/200/150"] },
+      { title: "Budget Friendly", price: 1700, badge: "Limited", imgs: ["https://picsum.photos/id/152/400/300","https://picsum.photos/id/153/200/150","https://picsum.photos/id/154/200/150","https://picsum.photos/id/155/200/150","https://picsum.photos/id/156/200/150"] },
+      { title: "Value Room", price: 1300, badge: "Almost gone", imgs: ["https://picsum.photos/id/177/400/300","https://picsum.photos/id/178/200/150","https://picsum.photos/id/179/200/150","https://picsum.photos/id/180/200/150","https://picsum.photos/id/181/200/150"] }
+    ];
+
+    function renderRooms() {
+      const grid = document.getElementById('roomsGrid');
+      if (!grid) return;
       grid.innerHTML = rooms.map(r => `
         <div class="room-card">
-          <div class="room-img"><img src="${r.img}" loading="lazy" alt="${r.title}"></div>
+          <div class="room-photos">
+            <img src="${r.imgs[0]}" class="main-img" alt="${r.title}" loading="lazy" onclick="openLightbox('${r.imgs[0]}')">
+            ${r.imgs.slice(1).map(img => `<img src="${img}" class="sub-img" alt="view" loading="lazy" onclick="openLightbox('${img}')">`).join('')}
+          </div>
           <div class="room-info">
             <div class="room-badge">${r.badge}</div>
             <h3>${r.title}</h3>
             <div class="room-price">R ${r.price.toLocaleString()}<span style="font-size:0.9rem">/month</span></div>
-            <a href="#" data-page="apply" class="btn-primary" style="display:inline-block; padding:10px 24px; text-decoration:none; margin-top:15px; background:var(--gold); color:var(--bg-dark);">Apply Now</a>
+            <a href="#" data-page="apply" class="btn-primary" style="padding:10px 24px; margin-top:10px;">Apply</a>
           </div>
         </div>
       `).join('');
     }
-  }
 
-  // ---------- AMENITIES ----------
-  const amenities = ["Free Unlimited WiFi", "24/7 Security & CCTV", "Backup Water & Electricity", "Laundry Facilities", "On-site Tuckshop", "Secure Parking", "Study Areas", "In-suite Stove & Fridge", "Hot Water 24/7", "Cleaning Services"];
-  
-  function renderAmenities() {
-    const grid = document.getElementById('amenitiesGrid');
-    if (grid) {
-      grid.innerHTML = amenities.map(a => `
-        <div class="amenity-card">
-          <i class="fas fa-check-circle"></i>
-          <span>${a}</span>
-        </div>
-      `).join('');
+    // AMENITIES (no study area, no beds count)
+    const amenities = ["Free Unlimited WiFi", "24/7 Security & CCTV", "Backup Water & Electricity", "Laundry Facilities", "On-site Tuckshop", "Secure Parking", "In-suite Stove & Fridge", "Hot Water 24/7", "Cleaning Services"];
+    function renderAmenities() {
+      const grid = document.getElementById('amenitiesGrid');
+      if (grid) grid.innerHTML = amenities.map(a => `<div class="amenity-card"><i class="fas fa-check-circle"></i><span>${a}</span></div>`).join('');
     }
-  }
 
-  // ---------- GALLERY ----------
-  const galleryImages = [
-    "https://picsum.photos/id/169/600/500",
-    "https://picsum.photos/id/175/600/500",
-    "https://picsum.photos/id/156/600/500",
-    "https://picsum.photos/id/29/600/500",
-    "https://picsum.photos/id/96/600/500",
-    "https://picsum.photos/id/116/600/500"
-  ];
-  
-  function renderGallery() {
-    const grid = document.getElementById('galleryGrid');
-    if (grid) {
-      grid.innerHTML = galleryImages.map(img => `
-        <div class="gallery-item">
-          <img src="${img}" loading="lazy" alt="Retema Gallery">
-        </div>
-      `).join('');
+    // GALLERY
+    const galleryImages = ["https://picsum.photos/id/169/600/500","https://picsum.photos/id/175/600/500","https://picsum.photos/id/156/600/500","https://picsum.photos/id/29/600/500","https://picsum.photos/id/96/600/500","https://picsum.photos/id/116/600/500"];
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      if (grid) grid.innerHTML = galleryImages.map(img => `<div class="gallery-item"><img src="${img}" loading="lazy" alt="gallery" onclick="openLightbox('${img}')"></div>`).join('');
     }
-  }
 
-  // ---------- MAP ----------
-  function initMap() {
-    const mapDiv = document.getElementById('map');
-    if (mapDiv && typeof L !== 'undefined') {
-      const map = L.map('map').setView([-22.9788, 30.4334], 17);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap'
-      }).addTo(map);
-      L.marker([-22.9788, 30.4334]).addTo(map).bindPopup('<b>🏠 Retema</b><br>Maungani, UNIVEN Main Gate').openPopup();
-    }
-  }
+    // LIGHTBOX
+    window.openLightbox = function(src) {
+      const lb = document.createElement('div');
+      lb.className = 'lightbox';
+      lb.innerHTML = `<img src="${src}" alt="enlarged">`;
+      lb.onclick = () => lb.remove();
+      document.body.appendChild(lb);
+    };
 
-  // ---------- PDF GENERATION ----------
-  function generatePDF() {
-    const content = `RETEMA STUDENT ACCOMMODATION
-========================================
-
-LOCATION: Maungani, UNIVEN Main Gate, Thohoyandou
-
-ROOM TYPES & PRICING:
-- Premium Suite: R3,700 (En-suite, Stove, Fridge)
-- Deluxe Double: R2,500 (Shared kitchen, WiFi)
-- Comfort Single: R2,300 (Single bed, Desk)
-- Standard Plus: R2,000
-- Budget Friendly: R1,700
-- Value Room: R1,300
-
-AMENITIES:
-- Free Unlimited WiFi
-- 24/7 Security & CCTV
-- Backup Water & Electricity
-- Laundry Facilities
-- On-site Tuckshop
-- Secure Parking
-- Study Areas
-- In-suite Stove & Fridge
-
-CONTACT:
-Phone: +27 66 267 2037
-WhatsApp: +27 66 267 2037
-Email: info@retema.co.za
-
-© 2025 Retema Student Accommodation`;
-    
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'Retema_Brochure.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-    alert('Brochure downloaded!');
-  }
-
-  // ---------- PAGE NAVIGATION - THE FIX ----------
-  const pages = document.querySelectorAll('.page');
-  const navLinks = document.querySelectorAll('[data-page]');
-  
-  function showPage(pageId) {
-    // Hide all pages
-    pages.forEach(page => {
-      page.classList.remove('active');
-    });
-    
-    // Show selected page
-    const targetPage = document.getElementById(`${pageId}-page`);
-    if (targetPage) {
-      targetPage.classList.add('active');
-    }
-    
-    // Update active nav links
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('data-page') === pageId) {
-        link.classList.add('active');
+    // MAP
+    function initMap() {
+      const mapDiv = document.getElementById('map');
+      if (mapDiv && typeof L !== 'undefined') {
+        const map = L.map('map').setView([-22.9788, 30.4334], 17);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        L.marker([-22.9788, 30.4334]).addTo(map).bindPopup('<b>🏠 Retema</b><br>Maungani, UNIVEN Gate').openPopup();
       }
-    });
-    
-    // Close mobile menu if open
-    document.getElementById('mobileMenu')?.classList.remove('open');
-    
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // Re-initialize map if on contact page
-    if (pageId === 'contact') {
-      setTimeout(initMap, 100);
     }
+
+    // PDF
+    function generatePDF() {
+      alert('Brochure downloaded! (Simulated)');
+    }
+
+    // PAGE NAVIGATION
+    const pages = document.querySelectorAll('.page');
+    const navLinks = document.querySelectorAll('[data-page]');
     
-    // Re-trigger scroll animations
-    setTimeout(() => {
-      document.querySelectorAll('.reveal').forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 100) {
-          el.classList.add('revealed');
+    function showPage(pageId) {
+      pages.forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(`${pageId}-page`);
+      if (target) target.classList.add('active');
+      
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-page') === pageId) link.classList.add('active');
+      });
+      
+      document.getElementById('mobileMenu')?.classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      if (pageId === 'contact') setTimeout(initMap, 150);
+      
+      setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 80) el.classList.add('revealed');
+        });
+      }, 200);
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPage(link.getAttribute('data-page'));
+      });
+    });
+
+    document.getElementById('logoHome')?.addEventListener('click', () => showPage('home'));
+    document.getElementById('menuIcon')?.addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+    document.getElementById('closeMenu')?.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+    document.getElementById('pdfDownloadBtn')?.addEventListener('click', generatePDF);
+    
+    document.getElementById('applyForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('✓ Application submitted! We will contact you shortly.');
+      showPage('home');
+    });
+
+    // LETTER ANIMATION
+    function animateLetters() {
+      const title = document.getElementById('heroTitle');
+      const desc = document.getElementById('heroDesc');
+      const badge = document.getElementById('heroBadge');
+      if (!title || title.dataset.animated) return;
+      [title, desc, badge].forEach(el => {
+        const text = el.innerText;
+        el.innerHTML = '';
+        [...text].forEach(char => {
+          const span = document.createElement('span');
+          span.className = 'letter-span';
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          el.appendChild(span);
+        });
+      });
+      const letters = document.querySelectorAll('#heroTitle .letter-span, #heroDesc .letter-span, #heroBadge .letter-span');
+      letters.forEach((l, i) => setTimeout(() => l.classList.add('revealed'), i * 30));
+      title.dataset.animated = 'true';
+    }
+
+    // REVEAL OBSERVER
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); observer.unobserve(entry.target); } });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // COUNTERS
+    const counters = document.querySelectorAll('.stat-number');
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseFloat(el.getAttribute('data-count'));
+          let val = 0;
+          const update = () => {
+            val += Math.ceil(target / 30);
+            if (val >= target) {
+              el.innerText = target + (el.innerText.includes('km') ? 'km' : (el.innerText.includes('%') ? '%' : (el.innerText.includes('/7') ? '/7' : '')));
+            } else {
+              el.innerText = val + (el.innerText.includes('km') ? 'km' : (el.innerText.includes('%') ? '%' : (el.innerText.includes('/7') ? '/7' : '')));
+              requestAnimationFrame(update);
+            }
+          };
+          update();
+          counterObs.unobserve(el);
         }
       });
-    }, 200);
-  }
-  
-  // Attach click handlers to all navigation links
-  navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const pageId = link.getAttribute('data-page');
-      showPage(pageId);
-    });
-  });
-  
-  // Logo click goes home
-  document.getElementById('logoHome')?.addEventListener('click', () => showPage('home'));
-  
-  // Mobile menu toggle
-  document.querySelector('.menu-icon')?.addEventListener('click', () => {
-    document.getElementById('mobileMenu').classList.add('open');
-  });
-  document.querySelector('.close-menu')?.addEventListener('click', () => {
-    document.getElementById('mobileMenu').classList.remove('open');
-  });
-  
-  // PDF download button
-  document.getElementById('pdfDownloadBtn')?.addEventListener('click', generatePDF);
-  
-  // Form submission
-  document.getElementById('applyForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('✓ Application submitted! We will contact you via WhatsApp within 24 hours.');
-    showPage('home');
-  });
+    }, { threshold: 0.6 });
+    counters.forEach(c => counterObs.observe(c));
 
-  // ---------- LETTER-BY-LETTER ANIMATION ON HOMEPAGE ----------
-  function animateLetterByLetter() {
-    const heroTitle = document.getElementById('heroTitle');
-    const heroDesc = document.getElementById('heroDesc');
-    const heroBadge = document.getElementById('heroBadge');
-    
-    if (!heroTitle || heroTitle.dataset.animated) return;
-    
-    // Animate title
-    const titleText = heroTitle.innerText;
-    heroTitle.innerHTML = '';
-    for (let char of titleText) {
-      const span = document.createElement('span');
-      span.className = 'letter-span';
-      span.textContent = char === ' ' ? '\u00A0' : char;
-      heroTitle.appendChild(span);
-    }
-    
-    // Animate description
-    const descText = heroDesc.innerText;
-    heroDesc.innerHTML = '';
-    for (let char of descText) {
-      const span = document.createElement('span');
-      span.className = 'letter-span';
-      span.textContent = char === ' ' ? '\u00A0' : char;
-      heroDesc.appendChild(span);
-    }
-    
-    // Animate badge
-    const badgeText = heroBadge.innerText;
-    heroBadge.innerHTML = '';
-    for (let char of badgeText) {
-      const span = document.createElement('span');
-      span.className = 'letter-span';
-      span.textContent = char === ' ' ? '\u00A0' : char;
-      heroBadge.appendChild(span);
-    }
-    
-    // Reveal letters one by one
-    const letters = document.querySelectorAll('#heroTitle .letter-span, #heroDesc .letter-span, #heroBadge .letter-span');
-    letters.forEach((letter, i) => {
-      setTimeout(() => {
-        letter.classList.add('revealed');
-      }, i * 35);
-    });
-    
-    heroTitle.dataset.animated = true;
-  }
-
-  // ---------- SCROLL REVEAL OBSERVER ----------
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('revealed');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-  // ---------- ANIMATED COUNTERS ----------
-  const counters = document.querySelectorAll('.stat-number');
-  const counterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const target = parseFloat(el.getAttribute('data-count'));
-        let val = 0;
-        const update = () => {
-          val += Math.ceil(target / 35);
-          if (val >= target) {
-            el.innerText = target + (el.innerText.includes('km') ? 'km' : (el.innerText.includes('%') ? '%' : (el.innerText.includes('/7') ? '/7' : '')));
-          } else {
-            el.innerText = val + (el.innerText.includes('km') ? 'km' : (el.innerText.includes('%') ? '%' : (el.innerText.includes('/7') ? '/7' : '')));
-            requestAnimationFrame(update);
-          }
-        };
-        update();
-        counterObserver.unobserve(el);
-      }
-    });
-  }, { threshold: 0.5 });
-  counters.forEach(c => counterObserver.observe(c));
-
-  // ---------- IMAGE UPLOAD FOR R-SHAPE ----------
-  document.getElementById('rImageArea')?.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        document.getElementById('rShapeImage').src = url;
-      }
-    };
-    input.click();
-  });
-
-  // ---------- INITIALIZE ----------
-  renderRooms();
-  renderAmenities();
-  renderGallery();
-  setTimeout(initMap, 500);
-  setTimeout(animateLetterByLetter, 300);
-  
-  console.log('✅ Website loaded - All navigation buttons should work now!');
+    // INIT
+    renderRooms();
+    renderAmenities();
+    renderGallery();
+    setTimeout(initMap, 600);
+    setTimeout(animateLetters, 400);
+  })();
 </script>
 </body>
 </html>
