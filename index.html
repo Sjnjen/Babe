@@ -2,50 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
   <title>Retema | Cinematic Student Living • UNIVEN Thohoyandou</title>
   
-  <!-- SEO -->
-  <meta name="description" content="Premium student accommodation at UNIVEN Maungani gate. Luxury rooms, NSFAS friendly, 24/7 security, free WiFi.">
-  <meta name="keywords" content="student accommodation Thohoyandou, UNIVEN housing, NSFAS approved, Maungani">
+  <meta name="description" content="Premium student accommodation at UNIVEN Maungani Gate. Luxury rooms, NSFAS friendly, 24/7 security, free WiFi.">
+  <meta name="keywords" content="student accommodation Thohoyandou, UNIVEN housing, NSFAS approved">
   <meta property="og:title" content="Retema | Premier Student Living">
   <meta property="og:type" content="website">
   <meta name="geo.region" content="ZA-LP">
   <meta name="geo.position" content="-22.9788;30.4334">
   
-  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     
     :root {
       --bg-dark: #0D0D0D;
       --gold: #C6A77D;
       --gold-dark: #7A5C3E;
+      --gold-glow: rgba(198, 167, 125, 0.3);
       --text-light: #F5F1EB;
+      --text-muted: #B0A89A;
       --glass-bg: rgba(13, 13, 13, 0.85);
-      --card-bg: rgba(255,255,255,0.03);
-      --border-light: rgba(198,167,125,0.15);
+      --glass-border: rgba(198, 167, 125, 0.15);
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--bg-dark);
       color: var(--text-light);
       overflow-x: hidden;
-      line-height: 1.5;
+      line-height: 1.6;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: none;
     }
     
-    /* Ambient grain overlay */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.4) 100%),
-                  repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
+      background: 
+        radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.4) 100%),
+        repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
       pointer-events: none;
       z-index: 9997;
       mix-blend-mode: soft-light;
@@ -57,30 +72,30 @@
       left: 0;
       width: 0%;
       height: 3px;
-      background: var(--gold);
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
       z-index: 10002;
-      transition: width 0.1s;
+      transition: width 0.15s linear;
+      box-shadow: 0 0 12px var(--gold-glow);
     }
     
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       .cursor-glow {
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(198,167,125,0.12) 0%, rgba(198,167,125,0) 70%);
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, rgba(198,167,125,0.10) 0%, rgba(198,167,125,0) 70%);
         position: fixed;
         pointer-events: none;
         z-index: 9999;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        display: none; /* hidden on mobile by default, shown via js if desktop */
+        transition: opacity 0.3s;
       }
     }
     
-    /* Loading Screen - Centered fix */
+    /* ── LOADING SCREEN ── */
     .loading-screen {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       background: var(--bg-dark);
@@ -89,160 +104,272 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: opacity 1s ease;
+      text-align: center;
+      transition: opacity 0.9s var(--transition-smooth), visibility 0.9s;
+      padding: 20px;
     }
-    .loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loading-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
     .loading-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 8vw, 4.5rem);
-      letter-spacing: 8px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(3rem, 8vw, 5rem);
+      letter-spacing: 10px;
       color: var(--gold);
-      animation: pulseGlow 1.5s infinite;
+      animation: pulseGlow 2s ease-in-out infinite;
+      text-align: center;
+      line-height: 1;
     }
     @keyframes pulseGlow {
-      0% { text-shadow: 0 0 0 rgba(198,167,125,0); }
-      50% { text-shadow: 0 0 20px rgba(198,167,125,0.5); }
-      100% { text-shadow: 0 0 0 rgba(198,167,125,0); }
+      0%, 100% { text-shadow: 0 0 0 rgba(198,167,125,0); }
+      50% { text-shadow: 0 0 30px rgba(198,167,125,0.6), 0 0 60px rgba(198,167,125,0.2); }
     }
     .loading-bar {
       width: min(280px, 70vw);
       height: 2px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px;
       overflow: hidden;
-      margin-top: 20px;
     }
     .loading-progress {
       width: 0%;
       height: 100%;
-      background: var(--gold);
-      transition: width 0.3s;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      border-radius: 4px;
+      transition: width 0.35s var(--transition-smooth);
+      box-shadow: 0 0 10px rgba(198,167,125,0.4);
+    }
+    .loading-subtitle {
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.7;
     }
     
-    /* Navbar */
+    /* ── NAVBAR ── */
     .navbar {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background: var(--glass-bg);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       z-index: 1000;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(198,167,125,0.2);
-      transition: all 0.3s;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--glass-border);
+      transition: all 0.4s var(--transition-smooth);
     }
-    .navbar.scrolled { padding: 10px 0; background: rgba(13,13,13,0.96); }
-    .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
-    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
+    .navbar.scrolled {
+      padding: 10px 0;
+      background: rgba(13,13,13,0.96);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 40px);
+    }
+    .nav-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
       font-weight: 700;
       letter-spacing: -0.5px;
       color: var(--gold);
       cursor: pointer;
+      transition: color 0.3s;
+      white-space: nowrap;
     }
     .logo span { color: var(--text-light); }
-    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links {
+      display: flex;
+      gap: clamp(16px, 3vw, 32px);
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
     .nav-links a {
       text-decoration: none;
       color: var(--text-light);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
-      transition: 0.3s;
+      letter-spacing: 0.5px;
+      transition: color 0.3s;
       white-space: nowrap;
+      position: relative;
     }
-    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--gold);
+    }
     .apply-nav {
       background: var(--gold);
       color: var(--bg-dark) !important;
-      padding: 10px 28px;
+      padding: 10px 26px;
       border-radius: 40px;
-      font-weight: 600;
+      font-weight: 600 !important;
+      transition: all 0.3s var(--transition-bounce) !important;
     }
-    .apply-nav:hover { background: var(--gold-dark); color: white !important; }
-    .menu-icon { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+    .apply-nav:hover {
+      background: var(--gold-dark);
+      color: white !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(198,167,125,0.3);
+    }
+    .apply-nav::after { display: none !important; }
+    
+    .menu-icon {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+      padding: 8px;
+      transition: color 0.3s;
+    }
+    .menu-icon:hover { color: var(--gold); }
     
     @media (max-width: 900px) {
       .nav-links { display: none; }
       .menu-icon { display: block; }
-      .container { padding: 0 20px; }
     }
     
-    /* Mobile menu */
+    /* ── MOBILE MENU ── */
     .mobile-menu {
       position: fixed;
       top: 0;
       right: -100%;
-      width: 75%;
-      max-width: 300px;
+      width: min(75vw, 320px);
       height: 100%;
       background: #0D0D0D;
       z-index: 2000;
       padding: 80px 30px;
-      transition: 0.4s;
+      transition: right 0.4s var(--transition-smooth);
       border-left: 1px solid rgba(198,167,125,0.3);
+      box-shadow: -10px 0 40px rgba(0,0,0,0.5);
     }
     .mobile-menu.open { right: 0; }
     .mobile-menu a {
       display: block;
-      padding: 18px 0;
+      padding: 16px 0;
       color: white;
       text-decoration: none;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.3s, padding-left 0.3s;
     }
-    .close-menu { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; }
+    .mobile-menu a:hover {
+      color: var(--gold);
+      padding-left: 8px;
+    }
+    .close-menu {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: color 0.3s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .close-menu:hover { color: var(--gold); }
     
-    /* Mobile bottom nav */
+    /* ── MOBILE BOTTOM NAV ── */
     .mobile-bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
       background: rgba(13,13,13,0.95);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       display: none;
       justify-content: space-around;
-      padding: 12px 20px;
+      padding: 10px 16px 14px;
       z-index: 1000;
-      border-top: 1px solid rgba(198,167,125,0.3);
+      border-top: 1px solid rgba(198,167,125,0.25);
+      gap: 4px;
     }
-    .mobile-bottom-nav a { color: var(--text-light); font-size: 0.9rem; text-align: center; flex: 1; text-decoration: none; }
-    .mobile-bottom-nav a i { display: block; margin-bottom: 4px; font-size: 1.2rem; }
-    @media (max-width: 900px) { .mobile-bottom-nav { display: flex; } body { padding-bottom: 70px; } }
+    .mobile-bottom-nav a {
+      color: var(--text-light);
+      font-size: 0.7rem;
+      text-align: center;
+      flex: 1;
+      text-decoration: none;
+      transition: color 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .mobile-bottom-nav a i { font-size: 1.2rem; }
+    .mobile-bottom-nav a.active { color: var(--gold); }
     
-    /* Page system */
-    .page { display: none; min-height: 100vh; padding-top: 100px; }
-    .page.active { display: block; animation: pageFadeIn 0.5s ease; }
+    @media (max-width: 900px) {
+      .mobile-bottom-nav { display: flex; }
+      body { padding-bottom: 70px; }
+      footer { padding-bottom: 90px; }
+    }
+    
+    /* ── PAGES ── */
+    .page {
+      display: none;
+      min-height: 100vh;
+      padding-top: 90px;
+      animation: pageFadeIn 0.5s var(--transition-smooth);
+    }
+    .page.active { display: block; }
     @keyframes pageFadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
     
-    .transition-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-dark);
-      z-index: 10001;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-    
-    /* Hero */
+    /* ── HERO ── */
     .hero {
       min-height: 90vh;
-      background: linear-gradient(135deg, #0D0D0D 0%, #1A1A1A 100%);
+      background: linear-gradient(160deg, #0D0D0D 0%, #1A1A1A 60%, #111 100%);
       display: flex;
       align-items: center;
       position: relative;
-      margin-top: -100px;
-      padding-top: 100px;
+      margin-top: -90px;
+      padding-top: 90px;
+      overflow: hidden;
     }
     .hero::before {
       content: '';
@@ -251,231 +378,524 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(198,167,125,0.08) 0%, transparent 70%);
-      animation: rotateGlow 25s linear infinite;
+      background: radial-gradient(ellipse at 30% 40%, rgba(198,167,125,0.06) 0%, transparent 60%);
+      animation: rotateGlow 30s linear infinite;
     }
-    @keyframes rotateGlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .hero-content { position: relative; z-index: 2; max-width: 700px; }
+    @keyframes rotateGlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      padding: 40px 0;
+    }
     .hero-badge {
       display: inline-block;
-      background: rgba(198,167,125,0.15);
-      backdrop-filter: blur(4px);
-      padding: 6px 20px;
+      background: rgba(198,167,125,0.12);
+      backdrop-filter: blur(8px);
+      padding: 8px 22px;
       border-radius: 40px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       letter-spacing: 3px;
-      margin-bottom: 24px;
-      border: 1px solid rgba(198,167,125,0.3);
+      margin-bottom: 28px;
+      border: 1px solid rgba(198,167,125,0.25);
+      text-transform: uppercase;
+      white-space: nowrap;
     }
     .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.2rem, 6vw, 4.8rem);
       font-weight: 700;
-      line-height: 1.1;
+      line-height: 1.08;
       margin-bottom: 24px;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
     }
-    .hero h1 span { color: var(--gold); }
-    .hero p { font-size: 1.1rem; opacity: 0.8; margin-bottom: 32px; line-height: 1.6; }
+    .hero h1 span {
+      color: var(--gold);
+      position: relative;
+    }
+    .hero p {
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      opacity: 0.8;
+      margin-bottom: 36px;
+      line-height: 1.7;
+      max-width: 560px;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
     
     .letter-span {
       display: inline-block;
       opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.08s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+      transform: translateY(24px);
+      transition: all 0.1s var(--transition-bounce);
     }
-    .letter-span.revealed { opacity: 1; transform: translateY(0); }
+    .letter-span.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
     
-    .btn-primary, .btn-outline {
-      padding: 14px 36px;
+    /* ── BUTTONS ── */
+    .btn-primary,
+    .btn-outline {
+      padding: 14px 34px;
       border-radius: 50px;
       text-decoration: none;
       font-weight: 600;
-      transition: 0.3s;
+      font-size: 0.9rem;
+      transition: all 0.35s var(--transition-bounce);
       display: inline-block;
       cursor: pointer;
       border: none;
-      font-size: 0.9rem;
-      margin: 5px 10px 5px 0;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      text-align: center;
     }
-    .btn-primary { background: var(--gold); color: var(--bg-dark); }
-    .btn-primary:hover { transform: translateY(-3px); background: var(--gold-dark); color: white; }
-    .btn-outline { border: 1px solid rgba(255,255,255,0.4); color: white; background: transparent; }
-    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--bg-dark);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      background: var(--gold-dark);
+      color: white;
+      box-shadow: 0 12px 30px rgba(122,92,62,0.4);
+    }
+    .btn-outline {
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      background: transparent;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(198,167,125,0.15);
+    }
     
+    .btn-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    
+    /* ── SECTIONS ── */
     .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 5vw, 3rem);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
       font-weight: 600;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      color: var(--text-light);
+      line-height: 1.2;
+      word-break: normal;
     }
     .section-sub {
       color: var(--gold);
       text-transform: uppercase;
-      letter-spacing: 4px;
-      font-size: 0.75rem;
-      margin-bottom: 10px;
+      letter-spacing: 5px;
+      font-size: 0.7rem;
+      margin-bottom: 8px;
     }
     section { padding: 60px 0; }
     
+    /* ── REVEAL ANIMATION ── */
     .reveal {
       opacity: 0;
       transform: translateY(40px);
-      transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      transition: all 0.7s var(--transition-bounce);
     }
-    .reveal.revealed { opacity: 1; transform: translateY(0); }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
     
-    /* Rooms Grid - 5 photos space */
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 24px;
+      margin: 50px 0;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 35px 20px;
+      text-align: center;
+      border: 1px solid var(--glass-border);
+      transition: all 0.4s var(--transition-smooth);
+    }
+    .stat-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .stat-number {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    
+    /* ── ROOMS ── */
     .rooms-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 40px;
+      grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+      gap: 36px;
       margin-top: 40px;
     }
     .room-card {
       background: var(--card-bg);
       border-radius: 28px;
       overflow: hidden;
-      border: 1px solid var(--border-light);
-      transition: all 0.4s;
+      border: 1px solid var(--glass-border);
+      transition: all 0.45s var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
     }
-    .room-card:hover { transform: translateY(-8px); border-color: var(--gold); }
-    .room-photos {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: auto auto;
-      gap: 4px;
-      height: 220px;
+    .room-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--gold);
+      box-shadow: 0 24px 50px rgba(0,0,0,0.4);
     }
-    .room-photos .main-img {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      height: 140px;
-    }
-    .room-photos .sub-img {
-      height: 76px;
+    .room-img {
+      height: 240px;
+      overflow: hidden;
       cursor: pointer;
+      position: relative;
     }
-    .room-photos img {
+    .room-img img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: 0.4s;
-      display: block;
+      transition: transform 0.6s var(--transition-smooth);
     }
-    .room-card:hover .room-photos img { transform: scale(1.02); }
-    .room-info { padding: 24px; }
-    .room-price { font-size: 1.8rem; font-weight: 700; color: var(--gold); margin: 10px 0; }
+    .room-card:hover .room-img img {
+      transform: scale(1.06);
+    }
+    .room-img::after {
+      content: '🔍';
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .room-card:hover .room-img::after { opacity: 1; }
+    
+    .room-info {
+      padding: 26px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .room-price {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin: 8px 0 12px;
+      line-height: 1;
+    }
+    .room-price span {
+      font-size: 0.85rem;
+      font-weight: 400;
+      opacity: 0.7;
+    }
     .room-badge {
       display: inline-block;
       background: var(--gold);
       color: var(--bg-dark);
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 20px;
       font-size: 0.7rem;
-      margin-bottom: 10px;
       font-weight: 600;
+      margin-bottom: 8px;
+      align-self: flex-start;
+      letter-spacing: 0.5px;
+    }
+    .room-photos {
+      display: flex;
+      gap: 8px;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+    .room-photo-thumb {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s var(--transition-bounce);
+      border: 2px solid transparent;
+    }
+    .room-photo-thumb:hover {
+      transform: scale(1.12);
+      border-color: var(--gold);
+      box-shadow: 0 6px 20px rgba(198,167,125,0.3);
+    }
+    .room-apply-btn {
+      margin-top: auto;
+      align-self: flex-start;
     }
     
+    /* ── AMENITIES ── */
     .amenities-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
+      gap: 18px;
       margin-top: 40px;
     }
     .amenity-card {
       background: var(--card-bg);
       border-radius: 20px;
-      padding: 20px 24px;
+      padding: 20px 22px;
       display: flex;
       align-items: center;
-      gap: 15px;
-      transition: 0.3s;
+      gap: 14px;
+      transition: all 0.3s var(--transition-smooth);
+      border: 1px solid transparent;
     }
-    .amenity-card:hover { background: rgba(198,167,125,0.1); transform: translateX(5px); }
-    .amenity-card i { font-size: 1.6rem; color: var(--gold); }
+    .amenity-card:hover {
+      background: rgba(198,167,125,0.08);
+      transform: translateX(6px);
+      border-color: var(--glass-border);
+    }
+    .amenity-card i {
+      font-size: 1.4rem;
+      color: var(--gold);
+      width: 28px;
+      text-align: center;
+    }
+    .amenity-card span {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      word-break: normal;
+    }
     
+    /* ── GALLERY ── */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
+      gap: 22px;
       margin-top: 40px;
     }
     .gallery-item {
       border-radius: 24px;
       overflow: hidden;
-      height: 280px;
+      height: 260px;
       cursor: pointer;
+      position: relative;
+      transition: all 0.4s var(--transition-smooth);
     }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-    .gallery-item:hover img { transform: scale(1.05); }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--transition-smooth);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+    .gallery-item:hover {
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
     
-    .map-wrapper { border-radius: 32px; overflow: hidden; margin: 30px 0; border: 1px solid rgba(198,167,125,0.3); }
-    #map { height: 450px; width: 100%; background: #1a1a1a; }
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 10003;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.35s var(--transition-smooth);
+      cursor: pointer;
+      padding: 20px;
+    }
+    .lightbox.open {
+      display: flex;
+      opacity: 1;
+    }
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 88vh;
+      object-fit: contain;
+      border-radius: 16px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 80px rgba(198,167,125,0.08);
+      transform: scale(0.9);
+      transition: transform 0.4s var(--transition-bounce);
+      cursor: default;
+      z-index: 1;
+    }
+    .lightbox.open img {
+      transform: scale(1);
+    }
+    .lightbox .close-lightbox {
+      position: absolute;
+      top: clamp(16px, 3vw, 30px);
+      right: clamp(16px, 3vw, 40px);
+      font-size: 2.2rem;
+      color: white;
+      cursor: pointer;
+      z-index: 2;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    .lightbox .close-lightbox:hover {
+      background: rgba(255,255,255,0.2);
+      transform: rotate(90deg);
+    }
+    .lightbox-caption {
+      position: absolute;
+      bottom: 30px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      z-index: 2;
+      letter-spacing: 2px;
+      text-align: center;
+    }
     
+    /* ── MAP ── */
+    .map-wrapper {
+      border-radius: 32px;
+      overflow: hidden;
+      margin: 30px 0;
+      border: 1px solid rgba(198,167,125,0.25);
+    }
+    #map {
+      height: 420px;
+      width: 100%;
+      background: #1a1a1a;
+    }
+    
+    /* ── CONTACT ── */
     .contact-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 40px;
+      gap: 30px;
       margin-top: 40px;
     }
     .contact-card {
       background: var(--card-bg);
       border-radius: 28px;
-      padding: 40px;
+      padding: 36px 28px;
       text-align: center;
+      border: 1px solid var(--glass-border);
+      transition: all 0.4s var(--transition-smooth);
     }
+    .contact-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold);
+    }
+    .contact-card i {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .contact-card h3 {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+    .contact-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      word-break: normal;
+    }
+    .contact-card a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .contact-card a:hover { color: var(--gold-dark); }
     
+    /* ── FORM ── */
     input, textarea, select {
       width: 100%;
-      padding: 16px 20px;
-      margin: 12px 0;
-      border-radius: 18px;
-      border: 1px solid var(--border-light);
-      background: var(--card-bg);
+      padding: 15px 18px;
+      margin: 10px 0;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.03);
       color: white;
       outline: none;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(198,167,125,0.1);
+    }
+    textarea { resize: vertical; min-height: 100px; }
     
+    /* ── FOOTER ── */
     footer {
       background: #0A0A0A;
-      padding: 60px 0 30px;
+      padding: 50px 0 30px;
       margin-top: 60px;
-      border-top: 1px solid rgba(198,167,125,0.2);
+      border-top: 1px solid rgba(198,167,125,0.15);
     }
     .footer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 50px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 40px;
     }
-    .footer-col h4 { color: var(--gold); margin-bottom: 20px; }
-    .footer-col a { color: #B0A89A; text-decoration: none; display: block; margin: 10px 0; transition: 0.2s; }
-    .footer-col a:hover { color: var(--gold); padding-left: 5px; }
-    
-    /* Lightbox for images */
-    .lightbox {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.95);
-      z-index: 10003;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: zoom-out;
+    .footer-col h4 {
+      color: var(--gold);
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
     }
-    .lightbox img {
-      max-width: 90vw;
-      max-height: 90vh;
-      border-radius: 16px;
+    .footer-col a, .footer-col p {
+      color: var(--text-muted);
+      text-decoration: none;
+      display: block;
+      margin: 8px 0;
+      font-size: 0.85rem;
+      transition: all 0.25s;
+    }
+    .footer-col a:hover {
+      color: var(--gold);
+      padding-left: 6px;
     }
     
-    @media (max-width: 768px) {
-      .rooms-grid { grid-template-columns: 1fr; }
-      .btn-primary, .btn-outline { padding: 12px 24px; }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero { min-height: 80vh; }
+      .hero-badge { font-size: 0.65rem; padding: 6px 16px; letter-spacing: 2px; }
+      .btn-group { flex-direction: column; gap: 10px; }
+      .btn-primary, .btn-outline { width: 100%; text-align: center; }
+      .room-img { height: 200px; }
+      .gallery-item { height: 200px; }
+      .contact-card { padding: 24px 18px; }
     }
   </style>
 </head>
@@ -483,22 +903,23 @@
 
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
-<div class="transition-overlay" id="transitionOverlay"></div>
 
-<!-- Loading Screen (centered) -->
+<!-- ═══════════════ LOADING SCREEN ═══════════════ -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">RETEMA</div>
-  <div class="loading-bar"><div class="loading-progress" id="loadProgress"></div></div>
+  <div class="loading-inner">
+    <div class="loading-logo">RETEMA</div>
+    <div class="loading-bar">
+      <div class="loading-progress" id="loadProgress"></div>
+    </div>
+    <div class="loading-subtitle">Cinematic Living</div>
+  </div>
 </div>
 
-<!-- Floating WhatsApp -->
-<a href="https://wa.me/27662672037" style="position:fixed; bottom:30px; right:30px; background:#25D366; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:1.8rem; z-index:99; text-decoration:none; box-shadow:0 8px 20px rgba(37,211,102,0.3);"><i class="fab fa-whatsapp"></i></a>
-
-<!-- Navbar -->
+<!-- ═══════════════ NAVBAR ═══════════════ -->
 <div class="navbar" id="navbar">
   <div class="container nav-flex">
     <div class="logo" id="logoHome">RETE<span>MA</span></div>
-    <div class="nav-links" id="desktopNav">
+    <div class="nav-links" id="desktopNavLinks">
       <a href="#" data-page="home" class="nav-link active">HOME</a>
       <a href="#" data-page="about" class="nav-link">ABOUT</a>
       <a href="#" data-page="residence" class="nav-link">RESIDENCE</a>
@@ -511,6 +932,7 @@
   </div>
 </div>
 
+<!-- ═══════════════ MOBILE MENU ═══════════════ -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="close-menu" id="closeMenu">✕</div>
   <a href="#" data-page="home">HOME</a>
@@ -522,22 +944,31 @@
   <a href="#" data-page="apply">APPLY</a>
 </div>
 
-<div class="mobile-bottom-nav">
-  <a href="#" data-page="home"><i class="fas fa-home"></i><span>Home</span></a>
+<!-- ═══════════════ MOBILE BOTTOM NAV ═══════════════ -->
+<div class="mobile-bottom-nav" id="mobileBottomNav">
+  <a href="#" data-page="home" class="active"><i class="fas fa-home"></i><span>Home</span></a>
   <a href="#" data-page="rooms"><i class="fas fa-bed"></i><span>Rooms</span></a>
   <a href="#" data-page="apply"><i class="fas fa-file-alt"></i><span>Apply</span></a>
-  <a href="#" data-page="contact"><i class="fas fa-phone"></i><span>Call</span></a>
+  <a href="#" data-page="contact"><i class="fas fa-phone"></i><span>Contact</span></a>
 </div>
 
+<!-- ═══════════════ LIGHTBOX ═══════════════ -->
+<div class="lightbox" id="lightbox">
+  <span class="close-lightbox" id="closeLightbox">&times;</span>
+  <img src="" alt="Full view" id="lightboxImg">
+  <div class="lightbox-caption">RETEMA • Cinematic Living</div>
+</div>
+
+<!-- ═══════════════ PAGES ═══════════════ -->
 <main>
-  <!-- HOME PAGE -->
+  <!-- HOME -->
   <div class="page active" id="home-page">
     <div class="hero">
       <div class="container hero-content">
-        <div class="hero-badge" id="heroBadge">✦ MAUNGANI | UNIVEN GATE ✦</div>
+        <div class="hero-badge" id="heroBadge">✦ MAUNGANI • UNIVEN MAUNGANI GATE ✦</div>
         <h1 id="heroTitle">Superior Student Living<br>in <span>Thohoyandou</span></h1>
         <p id="heroDesc">Premium accommodation for funded & unfunded students. Steps from University of Venda. Safe, modern & built for success.</p>
-        <div>
+        <div class="btn-group">
           <a href="#" data-page="rooms" class="btn-primary">Explore Rooms</a>
           <a href="#" data-page="apply" class="btn-outline">Apply Now</a>
         </div>
@@ -545,37 +976,37 @@
     </div>
   </div>
 
-  <!-- ABOUT PAGE -->
+  <!-- ABOUT -->
   <div class="page" id="about-page">
     <div class="container">
       <div class="section-sub">ABOUT RETEMA</div>
       <h1 class="section-title reveal">Premium Student Accommodation</h1>
-      <p class="reveal" style="color:#B0A89A; max-width:800px; margin-bottom:30px;">Located at Maungani, right next to UNIVEN Gate. The 'R' represents our dedication to exceptional student living.</p>
-      
-      <div class="stats-grid reveal">
-        <div class="stat-card"><div class="stat-number" data-count="1040">0</div><div>Total Beds</div></div>
-        <div class="stat-card"><div class="stat-number" data-count="24">0/7</div><div>Security & CCTV</div></div>
-        <div class="stat-card"><div class="stat-number" data-count="100">0%</div><div>WiFi Coverage</div></div>
-        <div class="stat-card"><div class="stat-number" data-count="1.3">0 km</div><div>From UNIVEN</div></div>
+      <div class="stats-grid">
+        <div class="stat-card reveal"><div class="stat-number" data-count="1040">0</div><div class="stat-label">Total Beds</div></div>
+        <div class="stat-card reveal"><div class="stat-number" data-count="24">0/7</div><div class="stat-label">Security & CCTV</div></div>
+        <div class="stat-card reveal"><div class="stat-number" data-count="100">0%</div><div class="stat-label">WiFi Coverage</div></div>
+        <div class="stat-card reveal"><div class="stat-number" data-count="1.3">0 km</div><div class="stat-label">From UNIVEN</div></div>
       </div>
+      <p class="reveal" style="color:var(--text-muted); max-width: 700px;">Retema offers premium NSFAS-friendly accommodation at Maungani, right next to UNIVEN Maungani Gate. Each unit features in-suite stoves, fridges, laundry facilities, tuckshop, secure parking, 24/7 CCTV, unlimited WiFi, and backup water & electricity. Your home away from home, crafted for excellence.</p>
     </div>
   </div>
 
-  <!-- RESIDENCE PAGE (no beds/study area) -->
+  <!-- RESIDENCE -->
   <div class="page" id="residence-page">
     <div class="container">
       <div class="section-sub">THE RESIDENCE</div>
       <h1 class="section-title reveal">Facilities & Amenities</h1>
       <div class="amenities-grid" id="amenitiesGrid"></div>
-      <div style="background:rgba(198,167,125,0.1); border-radius:28px; padding:40px; text-align:center; margin-top:50px;">
+      <div style="background:rgba(198,167,125,0.06); border-radius:28px; padding:40px 24px; text-align:center; margin-top:50px; border:1px solid var(--glass-border);">
         <i class="fas fa-download" style="font-size:2rem; color:var(--gold);"></i>
         <h3 style="margin:15px 0;">Download Brochure</h3>
-        <button id="pdfDownloadBtn" class="btn-primary">📄 Download PDF Brochure</button>
+        <p style="color:var(--text-muted);">Complete info about rooms, pricing, and amenities</p>
+        <button id="pdfDownloadBtn" class="btn-primary" style="margin-top:15px;">📄 Download PDF Brochure</button>
       </div>
     </div>
   </div>
 
-  <!-- ROOMS PAGE (5 photos per room) -->
+  <!-- ROOMS -->
   <div class="page" id="rooms-page">
     <div class="container">
       <div class="section-sub">ROOMS & PRICING</div>
@@ -584,7 +1015,7 @@
     </div>
   </div>
 
-  <!-- GALLERY PAGE -->
+  <!-- GALLERY -->
   <div class="page" id="gallery-page">
     <div class="container">
       <div class="section-sub">VISUAL TOUR</div>
@@ -593,261 +1024,475 @@
     </div>
   </div>
 
-  <!-- CONTACT PAGE -->
+  <!-- CONTACT -->
   <div class="page" id="contact-page">
     <div class="container">
       <div class="section-sub">GET IN TOUCH</div>
       <h1 class="section-title reveal">Contact Us</h1>
       <div class="contact-grid reveal">
-        <div class="contact-card"><i class="fas fa-phone-alt" style="font-size:2rem; color:var(--gold);"></i><h3>Phone</h3><p>+27 66 267 2037</p></div>
-        <div class="contact-card"><i class="fab fa-whatsapp" style="font-size:2rem; color:#25D366;"></i><h3>WhatsApp</h3><a href="https://wa.me/27662672037">Message Us</a></div>
-        <div class="contact-card"><i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--gold);"></i><h3>Address</h3><p>Maungani, UNIVEN Gate<br>Thohoyandou, 0950</p></div>
+        <div class="contact-card">
+          <i class="fas fa-phone-alt" style="color:var(--gold);"></i>
+          <h3>Phone</h3>
+          <p>+27 66 267 2037</p>
+          <a href="tel:+27662672037">Call Now</a>
+        </div>
+        <div class="contact-card">
+          <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+          <h3>WhatsApp</h3>
+          <p>Chat with our team</p>
+          <a href="https://wa.me/27662672037" target="_blank" rel="noopener">Message Us</a>
+        </div>
+        <div class="contact-card">
+          <i class="fas fa-map-marker-alt" style="color:var(--gold);"></i>
+          <h3>Address</h3>
+          <p>Maungani, UNIVEN Maungani Gate<br>Thohoyandou, 0950</p>
+        </div>
       </div>
       <div class="map-wrapper"><div id="map"></div></div>
+      <a href="https://maps.google.com/?q=University+of+Venda+Maungani+Gate" target="_blank" rel="noopener" class="btn-outline" style="margin-top:20px; display:inline-block;">📍 Open in Google Maps</a>
     </div>
   </div>
 
-  <!-- APPLY PAGE -->
+  <!-- APPLY -->
   <div class="page" id="apply-page">
     <div class="container">
       <div class="section-sub">SECURE YOUR ROOM</div>
       <h1 class="section-title reveal">Application Form</h1>
-      <div style="background:var(--card-bg); border-radius:32px; padding:40px;">
+      <div style="display:flex; gap:18px; flex-wrap:wrap; margin:30px 0;">
+        <div style="background:var(--card-bg); border-radius:24px; padding:24px 20px; flex:1; min-width:180px; text-align:center; border:1px solid var(--glass-border);">
+          <i class="fas fa-check-circle" style="color:var(--gold); font-size:2rem;"></i>
+          <h3 style="margin:10px 0; font-size:0.95rem;">NSFAS Approved</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Fully accredited for bursary funding</p>
+        </div>
+        <div style="background:var(--card-bg); border-radius:24px; padding:24px 20px; flex:1; min-width:180px; text-align:center; border:1px solid var(--glass-border);">
+          <i class="fas fa-bed" style="color:var(--gold); font-size:2rem;"></i>
+          <h3 style="margin:10px 0; font-size:0.95rem;">6 Room Types</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">From R1,300 to R3,700/month</p>
+        </div>
+        <div style="background:var(--card-bg); border-radius:24px; padding:24px 20px; flex:1; min-width:180px; text-align:center; border:1px solid var(--glass-border);">
+          <i class="fas fa-shield-alt" style="color:var(--gold); font-size:2rem;"></i>
+          <h3 style="margin:10px 0; font-size:0.95rem;">24/7 Security</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">CCTV & biometric access</p>
+        </div>
+      </div>
+      <div style="background:var(--card-bg); border-radius:32px; padding:clamp(24px,5vw,40px); border:1px solid var(--glass-border);">
         <form id="applyForm">
           <input type="text" placeholder="Full Name" required>
           <input type="email" placeholder="Email Address" required>
           <input type="tel" placeholder="Phone Number" required>
-          <select>
-            <option>Premium Suite - R3700/month</option>
-            <option>Deluxe Double - R2500/month</option>
-            <option>Comfort Single - R2300/month</option>
-            <option>Standard Plus - R2000/month</option>
-            <option>Budget Friendly - R1700/month</option>
-            <option>Value Room - R1300/month</option>
+          <select id="roomSelect">
+            <option value="">Select Room Type</option>
+            <option>Premium Suite — R3,700/month</option>
+            <option>Deluxe Double — R2,500/month</option>
+            <option>Comfort Single — R2,300/month</option>
+            <option>Standard Plus — R2,000/month</option>
+            <option>Budget Friendly — R1,700/month</option>
+            <option>Value Room — R1,300/month</option>
           </select>
-          <textarea placeholder="Additional Info" rows="3"></textarea>
-          <button type="submit" class="btn-primary" style="width:100%;">Submit Application</button>
+          <textarea placeholder="Additional information (NSFAS reference, special requests...)" rows="4"></textarea>
+          <button type="submit" class="btn-primary" style="width:100%; margin-top:8px;">Submit Application ✦</button>
         </form>
       </div>
     </div>
   </div>
 </main>
 
+<!-- ═══════════════ FOOTER ═══════════════ -->
 <footer>
   <div class="container">
     <div class="footer-grid">
-      <div class="footer-col"><h4>RETEMA</h4><p style="color:#B0A89A;">Maungani, UNIVEN Gate.</p></div>
-      <div class="footer-col"><h4>Links</h4><a href="#" data-page="home">Home</a><a href="#" data-page="rooms">Rooms</a></div>
-      <div class="footer-col"><h4>Contact</h4><a href="tel:+27662672037">+27 66 267 2037</a></div>
+      <div class="footer-col">
+        <h4>RETEMA</h4>
+        <p>Premier student accommodation at UNIVEN Maungani Gate. Cinematic living, crafted for students.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#" data-page="home">Home</a>
+        <a href="#" data-page="rooms">Rooms</a>
+        <a href="#" data-page="apply">Apply</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="tel:+27662672037">+27 66 267 2037</a>
+        <a href="https://wa.me/27662672037" target="_blank" rel="noopener">WhatsApp</a>
+        <a>info@retema.co.za</a>
+      </div>
     </div>
-    <div style="text-align:center; padding-top:30px; color:#B0A89A;">© 2025 Retema.</div>
+    <div style="text-align:center; padding-top:40px; color:var(--text-muted); font-size:0.8rem;">
+      <p>© 2025 Retema Student Accommodation. All Rights Reserved.</p>
+    </div>
   </div>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  (function() {
-    // LOADING SCREEN
-    let progress = 0;
-    const loadProgress = document.getElementById('loadProgress');
-    const loadingScreen = document.getElementById('loadingScreen');
-    const interval = setInterval(() => {
-      progress += Math.random() * 14;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        setTimeout(() => loadingScreen.classList.add('hidden'), 400);
-      }
-      loadProgress.style.width = Math.min(progress, 100) + '%';
-    }, 80);
+(function() {
+  'use strict';
 
-    // SCROLL PROGRESS
-    window.addEventListener('scroll', () => {
-      const winScroll = document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - window.innerHeight;
-      document.getElementById('scrollProgress').style.width = (winScroll / height) * 100 + '%';
-      document.getElementById('navbar').classList.toggle('scrolled', winScroll > 50);
+  // ═══════════════ DOM REFS ═══════════════
+  const loadingScreen = document.getElementById('loadingScreen');
+  const loadProgress = document.getElementById('loadProgress');
+  const scrollProgress = document.getElementById('scrollProgress');
+  const navbar = document.getElementById('navbar');
+  const cursorGlow = document.getElementById('cursorGlow');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const closeLightbox = document.getElementById('closeLightbox');
+  const pages = document.querySelectorAll('.page');
+  const navLinks = document.querySelectorAll('[data-page]');
+  const roomsGrid = document.getElementById('roomsGrid');
+  const amenitiesGrid = document.getElementById('amenitiesGrid');
+  const galleryGrid = document.getElementById('galleryGrid');
+  const applyForm = document.getElementById('applyForm');
+  const pdfDownloadBtn = document.getElementById('pdfDownloadBtn');
+  const logoHome = document.getElementById('logoHome');
+  const menuIcon = document.getElementById('menuIcon');
+  const closeMenuBtn = document.getElementById('closeMenu');
+  const mobileBottomNav = document.getElementById('mobileBottomNav');
+
+  // ═══════════════ LOADING SCREEN ═══════════════
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += Math.random() * 10 + 2;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(progressInterval);
+      setTimeout(() => loadingScreen.classList.add('hidden'), 600);
+    }
+    loadProgress.style.width = Math.min(progress, 100) + '%';
+  }, 80);
+
+  // ═══════════════ SCROLL PROGRESS ═══════════════
+  function updateScrollProgress() {
+    const winScroll = document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - window.innerHeight;
+    if (height > 0) {
+      scrollProgress.style.width = (winScroll / height) * 100 + '%';
+    }
+    navbar.classList.toggle('scrolled', winScroll > 40);
+  }
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+  // ═══════════════ CURSOR GLOW ═══════════════
+  if (window.innerWidth > 768 && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     });
+    document.addEventListener('mouseleave', () => {
+      cursorGlow.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', () => {
+      cursorGlow.style.opacity = '1';
+    });
+  } else {
+    cursorGlow.style.display = 'none';
+  }
 
-    // CURSOR GLOW (desktop only)
-    const glow = document.getElementById('cursorGlow');
-    if (window.matchMedia('(hover: hover)').matches) {
-      glow.style.display = 'block';
-      document.addEventListener('mousemove', e => {
-        glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      });
+  // ═══════════════ LIGHTBOX ═══════════════
+  window.openLightbox = function(src) {
+    lightboxImg.src = src;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function closeLightboxFn() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  closeLightbox.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeLightboxFn();
+  });
+
+  lightbox.addEventListener('click', function(e) {
+    if (e.target === lightbox || e.target === lightboxImg) {
+      closeLightboxFn();
     }
+  });
 
-    // ROOM DATA (5 photos each)
-    const rooms = [
-      { title: "Premium Suite", price: 3700, badge: "🔥 2 left", imgs: ["https://picsum.photos/id/164/400/300","https://picsum.photos/id/165/200/150","https://picsum.photos/id/166/200/150","https://picsum.photos/id/167/200/150","https://picsum.photos/id/168/200/150"] },
-      { title: "Deluxe Double", price: 2500, badge: "Popular", imgs: ["https://picsum.photos/id/20/400/300","https://picsum.photos/id/21/200/150","https://picsum.photos/id/22/200/150","https://picsum.photos/id/23/200/150","https://picsum.photos/id/24/200/150"] },
-      { title: "Comfort Single", price: 2300, badge: "New", imgs: ["https://picsum.photos/id/103/400/300","https://picsum.photos/id/104/200/150","https://picsum.photos/id/105/200/150","https://picsum.photos/id/106/200/150","https://picsum.photos/id/107/200/150"] },
-      { title: "Standard Plus", price: 2000, badge: "5 left", imgs: ["https://picsum.photos/id/132/400/300","https://picsum.photos/id/133/200/150","https://picsum.photos/id/134/200/150","https://picsum.photos/id/135/200/150","https://picsum.photos/id/136/200/150"] },
-      { title: "Budget Friendly", price: 1700, badge: "Limited", imgs: ["https://picsum.photos/id/152/400/300","https://picsum.photos/id/153/200/150","https://picsum.photos/id/154/200/150","https://picsum.photos/id/155/200/150","https://picsum.photos/id/156/200/150"] },
-      { title: "Value Room", price: 1300, badge: "Almost gone", imgs: ["https://picsum.photos/id/177/400/300","https://picsum.photos/id/178/200/150","https://picsum.photos/id/179/200/150","https://picsum.photos/id/180/200/150","https://picsum.photos/id/181/200/150"] }
-    ];
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightboxFn();
+    }
+  });
 
-    function renderRooms() {
-      const grid = document.getElementById('roomsGrid');
-      if (!grid) return;
-      grid.innerHTML = rooms.map(r => `
-        <div class="room-card">
-          <div class="room-photos">
-            <img src="${r.imgs[0]}" class="main-img" alt="${r.title}" loading="lazy" onclick="openLightbox('${r.imgs[0]}')">
-            ${r.imgs.slice(1).map(img => `<img src="${img}" class="sub-img" alt="view" loading="lazy" onclick="openLightbox('${img}')">`).join('')}
-          </div>
-          <div class="room-info">
-            <div class="room-badge">${r.badge}</div>
-            <h3>${r.title}</h3>
-            <div class="room-price">R ${r.price.toLocaleString()}<span style="font-size:0.9rem">/month</span></div>
-            <a href="#" data-page="apply" class="btn-primary" style="padding:10px 24px; margin-top:10px;">Apply</a>
-          </div>
+  // ═══════════════ ROOM DATA ═══════════════
+  const rooms = [
+    { title: "Premium Suite", price: 3700, badge: "🔥 2 left", photos: ["https://picsum.photos/id/164/600/400","https://picsum.photos/id/165/600/400","https://picsum.photos/id/166/600/400","https://picsum.photos/id/167/600/400","https://picsum.photos/id/168/600/400"] },
+    { title: "Deluxe Double", price: 2500, badge: "Popular", photos: ["https://picsum.photos/id/20/600/400","https://picsum.photos/id/21/600/400","https://picsum.photos/id/22/600/400","https://picsum.photos/id/23/600/400","https://picsum.photos/id/24/600/400"] },
+    { title: "Comfort Single", price: 2300, badge: "New", photos: ["https://picsum.photos/id/103/600/400","https://picsum.photos/id/104/600/400","https://picsum.photos/id/105/600/400","https://picsum.photos/id/106/600/400","https://picsum.photos/id/107/600/400"] },
+    { title: "Standard Plus", price: 2000, badge: "5 left", photos: ["https://picsum.photos/id/132/600/400","https://picsum.photos/id/133/600/400","https://picsum.photos/id/134/600/400","https://picsum.photos/id/135/600/400","https://picsum.photos/id/136/600/400"] },
+    { title: "Budget Friendly", price: 1700, badge: "Limited", photos: ["https://picsum.photos/id/152/600/400","https://picsum.photos/id/153/600/400","https://picsum.photos/id/154/600/400","https://picsum.photos/id/155/600/400","https://picsum.photos/id/156/600/400"] },
+    { title: "Value Room", price: 1300, badge: "Almost gone", photos: ["https://picsum.photos/id/177/600/400","https://picsum.photos/id/178/600/400","https://picsum.photos/id/179/600/400","https://picsum.photos/id/180/600/400","https://picsum.photos/id/181/600/400"] }
+  ];
+
+  function renderRooms() {
+    if (!roomsGrid) return;
+    roomsGrid.innerHTML = rooms.map(r => `
+      <div class="room-card">
+        <div class="room-img" onclick="openLightbox('${r.photos[0]}')">
+          <img src="${r.photos[0]}" loading="lazy" alt="${r.title}">
         </div>
-      `).join('');
-    }
+        <div class="room-info">
+          <div class="room-badge">${r.badge}</div>
+          <h3>${r.title}</h3>
+          <div class="room-price">R${r.price.toLocaleString()} <span>/month</span></div>
+          <div class="room-photos">
+            ${r.photos.map((p, i) => `<img src="${p}" class="room-photo-thumb" onclick="event.stopPropagation(); openLightbox('${p}')" alt="Photo ${i+1}" loading="lazy">`).join('')}
+          </div>
+          <a href="#" data-page="apply" class="btn-primary room-apply-btn" style="padding:12px 28px; font-size:0.85rem;">Apply Now</a>
+        </div>
+      </div>
+    `).join('');
+    attachRoomApplyListeners();
+  }
 
-    // AMENITIES (no study area, no beds count)
-    const amenities = ["Free Unlimited WiFi", "24/7 Security & CCTV", "Backup Water & Electricity", "Laundry Facilities", "On-site Tuckshop", "Secure Parking", "In-suite Stove & Fridge", "Hot Water 24/7", "Cleaning Services"];
-    function renderAmenities() {
-      const grid = document.getElementById('amenitiesGrid');
-      if (grid) grid.innerHTML = amenities.map(a => `<div class="amenity-card"><i class="fas fa-check-circle"></i><span>${a}</span></div>`).join('');
-    }
-
-    // GALLERY
-    const galleryImages = ["https://picsum.photos/id/169/600/500","https://picsum.photos/id/175/600/500","https://picsum.photos/id/156/600/500","https://picsum.photos/id/29/600/500","https://picsum.photos/id/96/600/500","https://picsum.photos/id/116/600/500"];
-    function renderGallery() {
-      const grid = document.getElementById('galleryGrid');
-      if (grid) grid.innerHTML = galleryImages.map(img => `<div class="gallery-item"><img src="${img}" loading="lazy" alt="gallery" onclick="openLightbox('${img}')"></div>`).join('');
-    }
-
-    // LIGHTBOX
-    window.openLightbox = function(src) {
-      const lb = document.createElement('div');
-      lb.className = 'lightbox';
-      lb.innerHTML = `<img src="${src}" alt="enlarged">`;
-      lb.onclick = () => lb.remove();
-      document.body.appendChild(lb);
-    };
-
-    // MAP
-    function initMap() {
-      const mapDiv = document.getElementById('map');
-      if (mapDiv && typeof L !== 'undefined') {
-        const map = L.map('map').setView([-22.9788, 30.4334], 17);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-        L.marker([-22.9788, 30.4334]).addTo(map).bindPopup('<b>🏠 Retema</b><br>Maungani, UNIVEN Gate').openPopup();
-      }
-    }
-
-    // PDF
-    function generatePDF() {
-      alert('Brochure downloaded! (Simulated)');
-    }
-
-    // PAGE NAVIGATION
-    const pages = document.querySelectorAll('.page');
-    const navLinks = document.querySelectorAll('[data-page]');
-    
-    function showPage(pageId) {
-      pages.forEach(p => p.classList.remove('active'));
-      const target = document.getElementById(`${pageId}-page`);
-      if (target) target.classList.add('active');
-      
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-page') === pageId) link.classList.add('active');
+  function attachRoomApplyListeners() {
+    document.querySelectorAll('.room-apply-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPage('apply');
       });
-      
-      document.getElementById('mobileMenu')?.classList.remove('open');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      if (pageId === 'contact') setTimeout(initMap, 150);
-      
-      setTimeout(() => {
-        document.querySelectorAll('.reveal').forEach(el => {
-          const rect = el.getBoundingClientRect();
-          if (rect.top < window.innerHeight - 80) el.classList.add('revealed');
-        });
-      }, 200);
+    });
+  }
+
+  // ═══════════════ AMENITIES ═══════════════
+  const amenities = [
+    { icon: "fa-wifi", text: "Free Unlimited WiFi" },
+    { icon: "fa-shield-alt", text: "24/7 Security & CCTV" },
+    { icon: "fa-bolt", text: "Backup Water & Electricity" },
+    { icon: "fa-tshirt", text: "Laundry Facilities" },
+    { icon: "fa-shopping-basket", text: "On-site Tuckshop" },
+    { icon: "fa-parking", text: "Secure Parking" },
+    { icon: "fa-fire", text: "In-suite Stove & Fridge" },
+    { icon: "fa-shower", text: "Hot Water 24/7" },
+    { icon: "fa-broom", text: "Cleaning Services" }
+  ];
+
+  function renderAmenities() {
+    if (!amenitiesGrid) return;
+    amenitiesGrid.innerHTML = amenities.map(a => `
+      <div class="amenity-card">
+        <i class="fas ${a.icon}"></i>
+        <span>${a.text}</span>
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════ GALLERY ═══════════════
+  const galleryImages = [
+    "https://picsum.photos/id/169/700/500",
+    "https://picsum.photos/id/175/700/500",
+    "https://picsum.photos/id/156/700/500",
+    "https://picsum.photos/id/29/700/500",
+    "https://picsum.photos/id/96/700/500",
+    "https://picsum.photos/id/116/700/500"
+  ];
+
+  function renderGallery() {
+    if (!galleryGrid) return;
+    galleryGrid.innerHTML = galleryImages.map(img => `
+      <div class="gallery-item" onclick="openLightbox('${img}')">
+        <img src="${img}" loading="lazy" alt="Retema Gallery">
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════ MAP ═══════════════
+  let mapInstance = null;
+  function initMap() {
+    const mapDiv = document.getElementById('map');
+    if (!mapDiv || typeof L === 'undefined') return;
+    if (mapInstance) {
+      mapInstance.invalidateSize();
+      return;
     }
+    mapInstance = L.map('map').setView([-22.9788, 30.4334], 17);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(mapInstance);
+    L.marker([-22.9788, 30.4334])
+      .addTo(mapInstance)
+      .bindPopup('<b>🏠 Retema</b><br>Maungani, UNIVEN Maungani Gate')
+      .openPopup();
+  }
+
+  // ═══════════════ PDF ═══════════════
+  function generatePDF() {
+    const content = [
+      'RETEMA STUDENT ACCOMMODATION',
+      '========================================',
+      '',
+      'LOCATION: Maungani, UNIVEN Maungani Gate, Thohoyandou',
+      '',
+      'ROOM TYPES & PRICING:',
+      '- Premium Suite: R3,700/month',
+      '- Deluxe Double: R2,500/month',
+      '- Comfort Single: R2,300/month',
+      '- Standard Plus: R2,000/month',
+      '- Budget Friendly: R1,700/month',
+      '- Value Room: R1,300/month',
+      '',
+      'AMENITIES: WiFi, Security, Backup Power/Water, Laundry, Tuckshop, Parking, Stove & Fridge',
+      '',
+      'CONTACT: +27 66 267 2037 | info@retema.co.za',
+      '',
+      '© 2025 Retema Student Accommodation'
+    ].join('\n');
+    
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Retema_Brochure.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert('✓ Brochure downloaded successfully!');
+  }
+
+  // ═══════════════ PAGE NAVIGATION ═══════════════
+  function showPage(pageId) {
+    pages.forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(`${pageId}-page`);
+    if (target) target.classList.add('active');
 
     navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        showPage(link.getAttribute('data-page'));
-      });
+      link.classList.remove('active');
+      if (link.getAttribute('data-page') === pageId) link.classList.add('active');
     });
 
-    document.getElementById('logoHome')?.addEventListener('click', () => showPage('home'));
-    document.getElementById('menuIcon')?.addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
-    document.getElementById('closeMenu')?.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
-    document.getElementById('pdfDownloadBtn')?.addEventListener('click', generatePDF);
-    
-    document.getElementById('applyForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('✓ Application submitted! We will contact you shortly.');
-      showPage('home');
-    });
+    if (mobileMenu) mobileMenu.classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // LETTER ANIMATION
-    function animateLetters() {
-      const title = document.getElementById('heroTitle');
-      const desc = document.getElementById('heroDesc');
-      const badge = document.getElementById('heroBadge');
-      if (!title || title.dataset.animated) return;
-      [title, desc, badge].forEach(el => {
-        const text = el.innerText;
-        el.innerHTML = '';
-        [...text].forEach(char => {
-          const span = document.createElement('span');
-          span.className = 'letter-span';
-          span.textContent = char === ' ' ? '\u00A0' : char;
-          el.appendChild(span);
-        });
-      });
-      const letters = document.querySelectorAll('#heroTitle .letter-span, #heroDesc .letter-span, #heroBadge .letter-span');
-      letters.forEach((l, i) => setTimeout(() => l.classList.add('revealed'), i * 30));
-      title.dataset.animated = 'true';
+    if (pageId === 'contact') {
+      setTimeout(initMap, 250);
     }
 
-    // REVEAL OBSERVER
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); observer.unobserve(entry.target); } });
-    }, { threshold: 0.2 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // COUNTERS
-    const counters = document.querySelectorAll('.stat-number');
-    const counterObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          const target = parseFloat(el.getAttribute('data-count'));
-          let val = 0;
-          const update = () => {
-            val += Math.ceil(target / 30);
-            if (val >= target) {
-              el.innerText = target + (el.innerText.includes('km') ? 'km' : (el.innerText.includes('%') ? '%' : (el.innerText.includes('/7') ? '/7' : '')));
-            } else {
-              el.innerText = val + (el.innerText.includes('km') ? 'km' : (el.innerText.includes('%') ? '%' : (el.innerText.includes('/7') ? '/7' : '')));
-              requestAnimationFrame(update);
-            }
-          };
-          update();
-          counterObs.unobserve(el);
+    setTimeout(() => {
+      document.querySelectorAll('.reveal').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 80) {
+          el.classList.add('revealed');
         }
       });
-    }, { threshold: 0.6 });
-    counters.forEach(c => counterObs.observe(c));
+    }, 200);
+  }
 
-    // INIT
-    renderRooms();
-    renderAmenities();
-    renderGallery();
-    setTimeout(initMap, 600);
-    setTimeout(animateLetters, 400);
-  })();
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const pageId = this.getAttribute('data-page');
+      showPage(pageId);
+    });
+  });
+
+  if (logoHome) {
+    logoHome.addEventListener('click', () => showPage('home'));
+  }
+
+  if (menuIcon) {
+    menuIcon.addEventListener('click', () => mobileMenu.classList.add('open'));
+  }
+  if (closeMenuBtn) {
+    closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  }
+
+  // ═══════════════ PDF BUTTON ═══════════════
+  if (pdfDownloadBtn) {
+    pdfDownloadBtn.addEventListener('click', generatePDF);
+  }
+
+  // ═══════════════ FORM SUBMISSION ═══════════════
+  if (applyForm) {
+    applyForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('✓ Application submitted successfully!\nWe will contact you via WhatsApp within 24 hours.');
+      showPage('home');
+    });
+  }
+
+  // ═══════════════ LETTER ANIMATION ═══════════════
+  function animateLetterByLetter() {
+    const heroTitle = document.getElementById('heroTitle');
+    if (!heroTitle || heroTitle.dataset.animated) return;
+    
+    ['heroTitle', 'heroDesc', 'heroBadge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = el.innerText;
+      el.innerHTML = '';
+      [...text].forEach(char => {
+        const span = document.createElement('span');
+        span.className = 'letter-span';
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        el.appendChild(span);
+      });
+    });
+    
+    const allLetters = document.querySelectorAll('#heroTitle .letter-span, #heroDesc .letter-span, #heroBadge .letter-span');
+    allLetters.forEach((letter, i) => {
+      setTimeout(() => letter.classList.add('revealed'), i * 30);
+    });
+    
+    heroTitle.dataset.animated = 'true';
+  }
+
+  // ═══════════════ REVEAL OBSERVER ═══════════════
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ═══════════════ COUNTER ANIMATION ═══════════════
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseFloat(el.getAttribute('data-count'));
+        const suffix = el.innerText.match(/[^\d.]*/)?.[0] || '';
+        let val = 0;
+        const duration = 1400;
+        const steps = 40;
+        const increment = target / steps;
+        const intervalTime = duration / steps;
+        
+        const counterInterval = setInterval(() => {
+          val += increment;
+          if (val >= target) {
+            val = target;
+            clearInterval(counterInterval);
+          }
+          el.innerText = Math.round(val) + suffix;
+        }, intervalTime);
+        
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stat-number').forEach(c => counterObserver.observe(c));
+
+  // ═══════════════ INIT ═══════════════
+  renderRooms();
+  renderAmenities();
+  renderGallery();
+  setTimeout(animateLetterByLetter, 500);
+  updateScrollProgress();
+
+  console.log('✅ Retema — Cinematic Student Living — Ready');
+  console.log('   All fixes applied: centered loader, immersive lightbox, no WhatsApp float, room apply nav, clean typography.');
+})();
 </script>
 </body>
 </html>
